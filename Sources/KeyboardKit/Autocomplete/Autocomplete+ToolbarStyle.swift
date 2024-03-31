@@ -27,7 +27,7 @@ public extension Autocomplete {
         ///   - separator: The style to apply to autocorrect items `.standardAutocorrect`.
         ///   - autocorrectItem: The autocorrect background style, by default `.standard`.
         public init(
-            height: CGFloat? = 50,
+            height: CGFloat? = 0,
             item: Autocomplete.ToolbarItemStyle = .standard,
             autocorrectItem: Autocomplete.ToolbarItemStyle = .standardAutocorrect,
             separator: Autocomplete.ToolbarSeparatorStyle = .standard
