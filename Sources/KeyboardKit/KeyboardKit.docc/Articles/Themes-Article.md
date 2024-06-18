@@ -13,35 +13,161 @@
 
 This article describes the KeyboardKit theme engine.
 
-👑 [KeyboardKit Pro][Pro] unlocks a theme engine and ``KeyboardTheme`` type, that makes it a lot easier to style your keyboard with themes. 
-
-KeyboardKit Pro comes with many predefined themes, style variations and theme-based views. You can also create your own themes and style variations.
+👑 [KeyboardKit Pro][Pro] unlocks a theme engine and a ``KeyboardTheme`` type that makes it easier to style your keyboard, as well as many predefined themes and theme-based views. You can easily create your own themes as well.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro
 
 
 ## What is a theme?
 
-A ``KeyboardTheme`` can be used to define keyboard styles in a way that can be easily used and modified. Themes can also define style variations, to provide even more variations within a constrained set of properties.
+A ``KeyboardTheme`` can provide keyboard-related styles in a way that can be easily used and modified. A theme can also define style variations that can be used to customize a constrained set of theme properties.
 
-KeyboardKit Pro also unlocks a ``ThemeBasedKeyboardStyleProvider``, which can be used to apply themes with the same style provider concept that is already used by many views in the library.
+KeyboardKit Pro also unlocks a ``KeyboardStyle/ThemeBasedProvider``, which can be used to apply a theme with the ``KeyboardStyleProvider`` concept that is used by some views, like the ``SystemKeyboard``.
 
 
 ## Predefined themes
 
-KeyboardKit comes with many pre-defined themes, like ``KeyboardTheme/standard``, ``KeyboardTheme/swifty`` and ``KeyboardTheme/minimal``. See the table further down for a full list of pre-defined themes.
+KeyboardKit has many predefined themes, like ``KeyboardTheme/standard``, ``KeyboardTheme/swifty`` and ``KeyboardTheme/minimal``. These themes also have style variations, that lets you vary their appearance, like the standard theme's ``KeyboardTheme/StandardStyle/blue`` and ``KeyboardTheme/StandardStyle/green`` variations:
 
-All themes come with individual style variations that lets you to tweak certain parts of the theme. This makes it easy for themes to define which parts that are customizable, to constrain variations.
+@TabNavigator {
+    @Tab(".standard") {
+        @Row {
+            @Column { 
+                ![standard](standard) 
+            }
+            @Column { 
+                ![blue](standard-blue) 
+            }
+            @Column { 
+                ![green](standard-green) 
+            }   
+        }
+    }
+    @Tab(".swifty") {
+        @Row {
+            @Column { 
+                ![standard](swifty) 
+            }
+            @Column { 
+                ![blue](swifty-blue) 
+            }
+            @Column { 
+                ![green](swifty-green) 
+            }   
+        }
+    }
+    @Tab(".minimal") {
+        @Row {
+            @Column { 
+                ![standard](minimal) 
+            }
+            @Column { 
+                ![blue](minimal-blue) 
+            }
+            @Column { 
+                ![subset](minimal-sunset) 
+            }   
+        }
+    }
+}
+
+KeyboardKit Pro also unlocks other, more expressive, themes, which provide their own unique visual baseline:
+
+@TabNavigator {
+    @Tab(".aesthetic") {
+        @Row {
+            @Column { 
+                ![boho](aesthetic-boho) 
+            }
+            @Column {}
+            @Column {}
+        }
+    }
+    @Tab(".candyShop") {
+        @Row {
+            @Column { 
+                ![standard](candyshop) 
+            }
+            @Column { 
+                ![cuppycake](candyshop-cuppycake) 
+            }
+            @Column {}
+        }
+    }
+    @Tab(".colorful") {
+        @Row {
+            @Column { 
+                ![blue](colorful-blue) 
+            }
+            @Column { 
+                ![green](colorful-green) 
+            }   
+            @Column { 
+                ![standard](colorful-orange) 
+            }
+        }
+    }
+    @Tab(".neon") {
+        @Row {
+            @Column { 
+                ![standard](neon) 
+            }
+            @Column {}
+            @Column {}
+        }
+    }
+    @Tab(".tron") {
+        @Row {
+            @Column { 
+                ![blue](tron) 
+            }
+            @Column { 
+                ![fcon](tron-fcon) 
+            }   
+            @Column { 
+                ![virus](tron-virus) 
+            }   
+        }
+    }
+}
+
+You can get a list of all predefined themes, as well as all pre-defined style variations, using the static ``KeyboardTheme/allPredefined`` properties. You can create your own themes, as well as custom style variations for all predefined themes.
 
 
-### How to create a custom theme
+## How to apply a theme
 
-You can create completely custom themes, like this one that only changes the color of the primary button:
+You can apply theme with the ``KeyboardStyle/ThemeBasedProvider`` style provider, or the ``KeyboardStyleProvider/themed(with:keyboardContext:)`` shorthand:
+
+```swift
+override func viewWillSetupKeyboard() {
+    super.viewWillSetupKeyboard()
+
+    // Setup KeyboardKit Pro with a license
+    setupPro(withLicenseKey: "...") { license in
+        services.styleProvider = .themed(
+            with: .standard,
+            keyboardContext: state.keyboardContext,
+            fallback: services.styleProvider
+        )
+    } view: { controller in
+        // Return your keyboard view here
+    }
+}
+```
+
+You can inherit ``KeyboardStyle/ThemeBasedProvider`` to customize the theme even further, which lets you mix the benefits of themes and styles.
+
+
+## How to create a custom theme
+
+Since a ``KeyboardTheme`` is just a struct, you can easily create your own custom themes by just defining new static theme value types. 
+
+For instance, this theme only changes the color of the primary button:
 
 ```swift
 extension KeyboardTheme {
 
-    static var customTheme: Self {
+    static var greenPrimary: Self {
         get throws {
             try? Self(primaryBackgroundColor: .green)
         }
@@ -49,14 +175,16 @@ extension KeyboardTheme {
 }
 ```
 
-You use other themes as base when creating custom themes, for instance:
+You can also use other themes as a base when creating your own custom themes, if you only want to change a small part of a theme. 
+
+For instance, this theme starts with the minimal theme and changes the color of the primary button to pink:
 
 ```swift
 extension KeyboardTheme {
 
-    static var anotherTheme: Self {
+    static var pinkPrimary: Self {
         get throws {
-            var theme = try? KeyboardTheme.standard
+            var theme = try? KeyboardTheme.minimal
             theme.buttonStyles[.primary]?.backgroundColor = .green
             return theme
         }
@@ -64,7 +192,9 @@ extension KeyboardTheme {
 }
 ```
 
-You can also create custom themes that just tweak the style variation of another theme:
+You can also create custom themes that just tweak a style variation of another theme. 
+
+For instance, this custom theme is a standard theme that applies a black tint color style variation:
 
 ```swift
 extension KeyboardTheme {
@@ -79,141 +209,20 @@ All these combinations make the theme engine very flexible and powerful.
 
 
 
-## How to apply themes
+## Views
 
-You can apply any theme by applying a ``ThemeBasedKeyboardStyleProvider`` or the ``KeyboardStyleProvider/themed(with:context:)`` shorthand:
-
-```swift
-override func viewWillSetupKeyboard() {
-    super.viewWillSetupKeyboard()
-
-    // Setup KeyboardKit Pro with a license
-    setupPro(withLicenseKey: "...") { license in
-        keyboardStyleProvider = .themed(.cottonCandy, context: keyboardContext)
-    } view: { controller in
-        // Return your keyboard view here
-    }
-}
-```
-
-You can inherit ``ThemeBasedKeyboardStyleProvider`` to customize this theme-based provider even further, which lets you mix the benefits of themes and styles in even more ways. 
-
-
-### Pre-defined themes
-
-You can access all pre-defined themes with `KeyboardTheme.{ID}`, e.g. **KeyboardKit.standard** or **KeyboardKit.minimal(.pink)**. 
-
-Here is a list of all pre-defined themes with some style variations:
-
-@TabNavigator {
-    @Tab(".standard"){
-        @Row {
-            @Column {
-                ![standard](standard.jpg)
-            }
-            @Column {
-                ![blue](standard-blue.jpg)
-            }
-            @Column {
-                ![green](standard-green.jpg)
-            }   
-        }
-    }
-    @Tab(".swifty") {
-        @Row {
-            @Column {
-                ![standard](swifty.jpg)
-            }
-            @Column {
-                ![blue](swifty-blue.jpg)
-            }
-            @Column {
-                ![green](swifty-green.jpg)
-            }   
-        }
-    }
-    @Tab(".minimal") {
-        @Row {
-            @Column {
-                ![standard](minimal.jpg)
-            }
-            @Column {
-                ![blue](minimal-blue.jpg)
-            }
-            @Column {
-                ![subset](minimal-sunset.jpg)
-            }   
-        }
-    }
-    @Tab(".candyShop") {
-        @Row {
-            @Column {
-                ![standard](candyshop.jpg)
-            }
-            @Column {
-                ![cuppycake](candyshop-cuppycake.jpg)
-            }
-            @Column {
-            }   
-        }
-    }
-    @Tab(".colorful") {
-        @Row {
-            @Column {
-                ![blue](colorful-blue.jpg)
-            }
-            @Column {
-                ![green](colorful-green.jpg)
-            }   
-            @Column {
-                ![standard](colorful-orange.jpg)
-            }
-        }
-    }
-    @Tab(".neon") {
-        @Row {
-            @Column {
-                ![standard](neon.jpg)
-            }
-            @Column {
-            }
-            @Column {
-            }   
-        }
-    }
-    @Tab(".tron") {
-        @Row {
-            @Column {
-                ![blue](tron.jpg)
-            }
-            @Column {
-                ![fcon](tron-fcon.jpg)
-            }   
-            @Column {
-                ![virus](tron-virus.jpg)
-            }   
-        }
-    }
-}
-
-You can get a list of all pre-defined themes, as well as all pre-defined style variations, using the static ``KeyboardTheme/allPredefined`` properties.
-
-
-### Views
-
-KeyboardKit Pro provides some theme-based views:
+KeyboardKit Pro unlocks views in the ``KeyboardTheme`` namespace, that make it easy to preview and present keyboard themes:
 
 @TabNavigator {
     @Tab("Theme.Shelf"){
+        A keyboard theme ``KeyboardTheme/Shelf`` can be used to list theme collections in a vertical list of horizontally scrolling shelves, much like a Netflix list:
+        
         @Row {
-            @Column {
-                A theme ``KeyboardTheme/Shelf`` renders theme collections in horizontally scrolling shelves.
-                
-                You can use a ``KeyboardTheme/ShelfItem`` as item view to show how a ``Keyboard/Button`` will look, or use completely custom views for titles and items.
-            }
-            @Column {
-                ![ThemeShelf](themeshelf.jpg)
-            }   
+            @Column {}
+            @Column(size: 2) { ![ThemeShelf](themeshelf) }
+            @Column {}
         }
+        
+        You can use the standard ``KeyboardTheme/ShelfItem`` view to show how a ``Keyboard/Button`` will look, or use completely custom views for the titles and items.
     }
 }

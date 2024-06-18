@@ -11,7 +11,8 @@ import SwiftUI
 
 public extension KeyboardLayout {
     
-    /// This type defines layout configs for various devices.
+    /// This type defines layout configs for various devices
+    /// and screen orientations.
     ///
     /// The standard configurations can be changed to affect
     /// the global defaults.
@@ -23,14 +24,17 @@ public extension KeyboardLayout {
         ///   - buttonCornerRadius: The button corner radius.
         ///   - buttonInsets: The button edge insets.
         ///   - rowHeight: The total row height including insets.
+        ///   - inputToolbarHeight: The height to use for a topmost input toolbar.
         public init(
-            buttonCornerRadius: CGFloat,
+            buttonCornerRadius: Double,
             buttonInsets: EdgeInsets,
-            rowHeight: CGFloat
+            rowHeight: Double,
+            inputToolbarHeight: Double? = nil
         ) {
             self.buttonCornerRadius = buttonCornerRadius
             self.buttonInsets = buttonInsets
             self.rowHeight = rowHeight
+            self.inputToolbarHeight = inputToolbarHeight ?? (0.75 * rowHeight)
         }
         
         /// The keyboard button corner radius.
@@ -41,6 +45,9 @@ public extension KeyboardLayout {
         
         /// The total row height, including insets.
         public var rowHeight: CGFloat
+        
+        /// The height to use for a topmost input toolbar.
+        public var inputToolbarHeight: Double
     }
 }
 
@@ -130,7 +137,7 @@ public extension KeyboardLayout.Configuration {
     /// You can set this config to affect the global default.
     static var standardPad = Self(
         buttonCornerRadius: 5,
-        buttonInsets: .init(horizontal: 6, vertical: 4),
+        buttonInsets: .init(horizontal: 5, vertical: 4),
         rowHeight: standardPadRowHeight
     )
 
@@ -167,7 +174,8 @@ public extension KeyboardLayout.Configuration {
     static var standardPhone = Self(
         buttonCornerRadius: 5,
         buttonInsets: .init(horizontal: 3, vertical: 6),
-        rowHeight: standardPhoneRowHeight
+        rowHeight: standardPhoneRowHeight,
+        inputToolbarHeight: standardPhoneRowHeight
     )
 
     /// The standard config for an iPhone in landscape.
@@ -176,14 +184,16 @@ public extension KeyboardLayout.Configuration {
     static var standardPhoneLandscape = Self(
         buttonCornerRadius: 5,
         buttonInsets: .init(horizontal: 3, vertical: 4),
-        rowHeight: standardPhoneLandscapeRowHeight
+        rowHeight: standardPhoneLandscapeRowHeight,
+        inputToolbarHeight: standardPhoneLandscapeRowHeight
     )
 
     /// The standard config for iPhone Pro Max in portrait.
     static var standardPhoneProMax = Self(
         buttonCornerRadius: 5,
         buttonInsets: .init(horizontal: 3, vertical: 5.5),
-        rowHeight: standardPhoneProMaxRowHeight
+        rowHeight: standardPhoneProMaxRowHeight,
+        inputToolbarHeight: standardPhoneProMaxRowHeight
     )
 
     /// The standard config for iPhone Pro Max in landscape.
@@ -192,6 +202,7 @@ public extension KeyboardLayout.Configuration {
     static var standardPhoneProMaxLandscape = Self(
         buttonCornerRadius: 5,
         buttonInsets: .init(horizontal: 3, vertical: 4),
-        rowHeight: standardPhoneProMaxLandscapeRowHeight
+        rowHeight: standardPhoneProMaxLandscapeRowHeight,
+        inputToolbarHeight: standardPhoneProMaxLandscapeRowHeight
     )
 }

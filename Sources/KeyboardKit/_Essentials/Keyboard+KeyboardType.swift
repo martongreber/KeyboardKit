@@ -11,15 +11,16 @@ import SwiftUI
 
 public extension Keyboard {
     
-    /**
-     This enum defines various keyboard types, of which some
-     are implemented by the library.
-     
-     The ``SystemKeyboard`` can be used to render alphabetic,
-     numeric, symbolic and emoji keyboards. You just have to
-     set ``KeyboardContext/keyboardType`` to a type you want
-     to use, and the keyboard will render it.
-     */
+    /// This enum defines various keyboard types, of which a
+    /// few are already implemented by the library.
+    ///
+    /// The ``SystemKeyboard`` will automatically render the
+    /// ``alphabetic(_:)``, ``numeric`` & ``symbolic`` types,
+    /// as well as ``emojis`` if KeyboardKit Pro is unlocked.
+    /// The rest must be handled manually.
+    ///
+    /// Just set the ``KeyboardContext/keyboardType`` to any
+    /// type you want to use, then observe the value.
     enum KeyboardType: Codable, Equatable, Identifiable {
         
         /// A keyboard with alphabetic input keys.
@@ -40,6 +41,9 @@ public extension Keyboard {
         /// An image keyboard, not currently implemented.
         case images
         
+        /// A number pad keyboard.
+        case numberPad
+        
         /// A custom keyboard type, if you need to use one.
         case custom(named: String)
     }
@@ -56,6 +60,7 @@ public extension Keyboard.KeyboardType {
         case .email: "email"
         case .emojis: "emojis"
         case .images: "images"
+        case .numberPad: "numberPad"
         case .custom(let name): name
         }
     }
@@ -115,3 +120,28 @@ public extension Keyboard.KeyboardType {
         }
     }
 }
+
+#if os(iOS) || os(tvOS) || os(visionOS)
+public extension UIKeyboardType {
+ 
+    /// The ``Keyboard/KeyboardType`` this type represents.
+    var keyboardType: Keyboard.KeyboardType? {
+        switch self {
+        case .default: .alphabetic(.auto)
+        case .asciiCapable: nil
+        case .numbersAndPunctuation: .numeric
+        case .URL: .alphabetic(.auto)
+        case .numberPad: .numberPad
+        case .phonePad: nil
+        case .namePhonePad: nil
+        case .emailAddress: .alphabetic(.auto)
+        case .decimalPad: nil
+        case .twitter: .alphabetic(.auto)
+        case .webSearch: .alphabetic(.auto)
+        case .asciiCapableNumberPad: .numberPad
+        case .alphabet: .alphabetic(.auto)
+        @unknown default: .alphabetic(.auto)
+        }
+    }
+}
+#endif

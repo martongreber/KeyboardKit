@@ -9,16 +9,12 @@
 import KeyboardKitPro
 import SwiftUI
 
-/// This keyboard has a KeyboardKit Pro `ToggleToolbar` that
-/// can toggle between a main and an alternate toolbar.
+/// This demo-specific toolbar uses a Pro `ToggleToolbar` to
+/// toggle between a main autocomplete toolbar and this one.
 ///
-/// This demo uses the standard autocomplete toolbar as main
-/// toolbar, and this custom one as the alternate one.
-///
-/// This toolbar has a text field that lets you test how the
-/// text routing text field behaves, as well as buttons that
-/// trigger certain operations like picking themes, starting
-/// dictation, open settings, etc.
+/// This view has text fields that let you test routing text
+/// fields, as well as buttons to trigger certain operations
+/// like picking themes, open settings, etc.
 struct DemoToolbar: View {
     
     unowned var controller: KeyboardInputViewController
@@ -29,10 +25,13 @@ struct DemoToolbar: View {
     var proxy: UITextDocumentProxy
     
     @State
-    private var fullDocumentContext: String?
+    private var fullDocumentContext = ""
     
     @State
     private var isThemePickerPresented = false
+    
+    @State
+    private var isFullDocumentContextActive = false
     
     @FocusState
     private var isTextFieldFocused
@@ -51,7 +50,7 @@ struct DemoToolbar: View {
         .padding(10)
         .font(.headline)
         .buttonStyle(.bordered)
-        .sheet(item: $fullDocumentContext, content: fullDocumentContextSheet)
+        .sheet(isPresented: $isFullDocumentContextActive, content: fullDocumentContextSheet)
         .sheet(isPresented: $isThemePickerPresented, content: themePickerSheet)
     }
 }
@@ -71,9 +70,10 @@ private extension DemoToolbar {
         }
     }
     
-    func fullDocumentContextSheet(text: String?) -> some View {
+    func fullDocumentContextSheet() -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(text ?? "-")
+            Text(fullDocumentContext)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
         .demoSheet("Full Document Reader")
@@ -114,6 +114,7 @@ private extension DemoToolbar {
     }
     
     func readFullDocumentContext() {
+        isFullDocumentContextActive = true
         fullDocumentContext = "Reading..."
         Task {
             let result = try await proxy.fullDocumentContext()

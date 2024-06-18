@@ -8,23 +8,18 @@
 
 import Combine
 
-/**
- This observable class can be used to handle an autocomplete
- specific state, including configurations and suggestions.
- 
- The ``isAutocompleteEnabled`` property can be set to `false`
- to completely disable autocomplete. The property is used by
- both the ``KeyboardInputViewController`` as well as service
- implementations, to not perform autocomplete.
- 
- The ``isAutocorrectEnabled`` property can be set to `false`,
- to disable autocorrection. This property can be used by any
- autocomplete service implementation, to remove autocorrects
- from the result.
-
- KeyboardKit automatically creates an instance of this class
- and injects it into ``KeyboardInputViewController/state``.
- */
+/// This class has observable, autocomplete-related state.
+///
+/// The ``suggestions`` property can be updated whenever the
+/// user types on the keyboard or the current text selection
+/// changes. The ``KeyboardInputViewController`` will handle
+/// this automatically, with the ``AutocompleteProvider`` in
+/// ``KeyboardInputViewController/services``.
+///
+/// KeyboardKit will automatically setup an instance of this
+/// class in ``KeyboardInputViewController/state``, then use
+/// it as global state and inject it as an environment value
+/// into the view hierarchy. 
 public class AutocompleteContext: ObservableObject {
     
     public init() {}

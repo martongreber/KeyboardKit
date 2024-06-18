@@ -3,11 +3,223 @@
 KeyboardKit tries to honor semantic versioning:
 
 * Deprecations can happen at any time.
-* Deprecations should only be removed in `major` versions.
+* Deprecations should only be removed in `major` updates.
 * Breaking changes should not occur in `minor` and `patch` updates.
-* Breaking changes can occur in `minor` and `patch` updates, if needed for critical fixes.
+* Breaking changes *can* occur in `minor` and `patch` updates, if needed.
 
 These release notes only cover the current major version. 
+
+
+
+## 8.6
+
+This version adds support for 5 new locales, support for diacritics, and makes it easier to identify the host application. It also improves many of the localized system keyboards that are provided by Pro.
+
+This version also changes the default autocomplete behavior, by making `KeyboardInputViewController` only use the pre-cursor part of the current word for autocomplete, which is how the native keyboard behaves. 
+
+This version also makes KeyboardKit Pro no longer overwrite custom services that are set before registering a license. This means that you can now apply custom services at any time, without it being overwritten. 
+
+This version also reduces load times and memory usage in KeyboardKit Pro, by lazily resolving localized callout action providers and layout providers, and makes all supported locales use the iPad Pro layout.
+
+### ✨ Features
+
+* `Keyboard.Accent` is a new typealias for diacritics.
+* `Keyboard.Diacritic` is a new type that lets you model diacritics.
+* `KeyboardAction.accent` is a new typealias for the `.diacritic` action.
+* `KeyboardAction.diacritic` is a new action that lets you insert diacritics.
+* `KeyboardController` has a new `insertDiacritic(_:)` function.
+* `KeyboardLayout` and its `Item` has much new functionality.
+* `KeyboardLocale` has new locale-based initializers and matching functions.
+* `UITextDocumentProxy` has a new `insertDiacritic(_:)` function.
+
+### 💡 Adjustments
+
+* `KeyboardInputViewController` `autocompleteText` now uses the pre-cursor part of the current word, instead of the full word.
+* `KeyboardInputViewController` `hostBundleId` has been renamed to `hostApplicationBundleId`.
+
+### 🌐 New Locales
+
+* French (Canada) - fr_CA
+* Norwegian (Nynorsk) - nn
+* Spanish (Latin America) - es_419
+* Spanish (Mexico) - es_MX
+* Welsh - cy 
+
+### 👑 KeyboardKit Pro
+
+* `Callouts.StandardActionProvider` now allocates license services lazily, on demand.
+* `Keyboard.ToggleToolbar` can now use an external toggle binding.
+* `Keyboard.ToggleToolbar` no longer relies on a standard `AnyView`.
+* `Keyboard.ToggleToolbarToggle` is a new, customizable toolbar toggle.
+* `KeyboardContext` has a new `hostApplication` property.
+* `KeyboardHostApplication` is a new enum with known applications.
+* `KeyboardInputViewController` has a new `hostApplication` property.
+* `KeyboardInputViewController` `setupPro` no longer creates a new callout provider.
+* `KeyboardInputViewController` `setupPro` no longer creates a new layout provider.
+* `KeyboardLayout` has a new `LatinLayoutType` enum.
+* `KeyboardLayout.ProProvider.Czech` now uses proper diacritic keys on iPhone & iPad.
+* `KeyboardLayout.StandardProvider` now allocates license services lazily, on demand.
+* `KeyboardLocale.georgian` no longer uses regular font weight in alphabetic keyboard.
+* `KeyboardLocale.norwegian` has adjusted callout actions.
+
+* These locales now use iPad Pro layout:
+    * Arabic
+    * Belarusian
+    * Bulgarian
+    * Catalan
+    * Cherokee
+    * Hebrew
+    * Kazakh
+    * Kurdish Sorani
+    * Kurdish Sorani - Arabic
+    * Kurdish Sorani - PC
+    * Persian
+    
+* These locales have improved iPad Pro layouts:
+    * French (Switzerland)
+    * Greek
+    * Inari Sami
+    * Macedonian
+    * Mongolian
+    
+* These locales have improved iPhone layouts:
+    * Arabic
+    
+### 🐛 Bug fixes
+
+* `KeyboardAction.tab` now uses an LTR/RTL supporting icon.
+* `KeyboardContext` now matches `keyboardLocale` on language code as well, to work around system bug.
+
+
+
+## 8.5.6
+
+This version makes it easier to create a themed style provider, and adds a new `.numberPad` keyboard type.
+
+### ✨ Features
+
+* `Keyboard.KeyboardType` has a new `.numberPad` type.
+* `KeyboardStyleProvider.themed` has new convenience apis.
+
+### 💡 Adjustments
+
+* `KeyboardContext` will now get its initial keyboard type set to the document text proxy's keyboard type.
+
+
+
+## 8.5.3
+
+This version adds a `licenseError` parameter to `setupPro`.
+
+As such, the `setupProError` in `KeyboardInputViewController` is deprecated and no longer used.
+
+
+
+## 8.5.2
+
+This version adds a new `SystemKeyboardBottomRow` component, adds some new actions and fixes a bug.
+
+### ✨ Features
+
+* `KeyboardAction` has a new `.text` action to insert long text.
+* `KeyboardLayout` has a new `.bottomRowSystemItemWidth` property. 
+* `SystemKeyboardComponent` is a new protocol that defines shared typealiases. 
+
+### 💡 Adjustments
+
+* `KeyboardAction.url` is now a system key.
+
+### 👑 KeyboardKit Pro
+
+* `SystemKeyboardBottomRow` is a new Pro component.
+
+### 🐛 Bug fixes
+
+* `SystemKeyboard` no longer shows the emoji key for insufficient KeyboardKit Pro licenses.
+
+
+
+## 8.5.1
+
+This version adjusts the autocomplete behavior for empty text and fixes a gesture bug.
+
+### 💡 Adjustments
+
+* `KeyboardInputViewController` no longer hard resets the autocomplete context when the text is empty.
+
+### 🐛 Bug fixes
+
+* `KeyboardGesture` has a new `.end` gesture, which is used to fix a bug that could cause space drag to never end.
+
+### 👑 KeyboardKit Pro
+
+* KeyboardKit Pro has new ways to allow more flexible feature and tier validation. 
+
+
+
+## 8.5
+
+This version moves many types into their related namespaces, to make the SDK surface smaller and easier to overview. Since this involves many renamings, the `Deprecations` section below only lists deprecated types. 
+
+The library has deprecation types to help you migrate to the new type names, so you should not run into any breaking changes when migrating from earlier versions to this one.
+
+The `KeyboardState` namespace has been renamed to `KeyboardStatus`, since it was often confused with `Keyboard.KeyboardState`. `Keyboard.KeyboardState` & `Keyboard.KeyboardServices` have also been renamed to the shorter `Keyboard.State` and `Keyboard.Services`, since it reads better in code.
+
+This version also makes it easier register custom audio and haptic feedback, in a way that now requires less or no customizations in the action handler. Just register any custom feedback for any gesture on any action, and it will be triggered by the standard action handler.
+
+This version also makes the action and input callout bubbles look more native.
+
+Finally, KeyboardKit Pro makes more locales use the new iPad Pro layout. It also provides a brand new `KeyboardApp.HomeScreen` that can be used as an app home screen, and a new `KeyboardStatus.Section` that can show all relevant statuses for a keyboard app.
+
+### 🚨 Important Information 
+
+* Many types are moved into their related namespaces.
+* The `EmojiKeyboard` sub-components are now throwing as well.
+* The `KeyboardStatus.Label` now uses its style to change icons.
+* Renamed types use `@available` deprecations to help adjust your code.
+
+### ✨ Features
+
+* `Feedback.Audio` has a new `customUrl` that can play URL-based audio.
+* `Feedback.AudioConfiguration` has new ways to register custom feedback.
+* `Feedback.HapticConfiguration` has new ways to register custom feedback.
+* `FeedbackContext` has new ways to register custom audio/haptic feedback.
+* `KeyboardLayout` has a new `copy()` function that creates a mutable copy.
+* `KeyboardLayout` has new functions for using and tweaking the bottom row.
+* `KeyboardLayout` has a new `inputToolbarLayout()` value builder function.
+* `KeyboardLayout` has a new functions for getting the total layout height.
+* `SystemKeyboard`'s service-based initializer now allows a layout override.
+* `View` has a new `keyboardInputToolbarDisplayMode` modifier for input toolbars.
+
+### 💡 Adjustments
+
+* `Callouts` now use curves that look a lot more native.
+* `Keyboard.Button` no longer has a minimum scale factor.
+* `KeyboardApp` is a new namespace for app-related types.
+* `KeyboardApp.HomeScreen` is a new app home screen view template.
+* `KeyboardLayout.Configuration` now defines number toolbar height.
+* `KeyboardFeedback` is a new namespace for feedback-related types.
+* `KeyboardSettings` is a new namespace for settings-related types.
+* `KeyboardStatus.Label` now uses filled icon variants, by default.
+* `KeyboardStyle.StandardProvider` now applies a light weight to backspace.
+* `KeyboardStyle.StandardProvider` now applies more adaptive content insets.
+* `SystemKeyboard` has been optimized in how it renders the system keyboard.
+
+### 👑 KeyboardKit Pro
+
+* `KeyboardApp.HomeScreen` is a new app-specific home screen template.
+* `KeyboardStatus` has a new `Section` view that can display keyboard statuses.
+* `KeyboardTextField` and `KeyboardTextView` can now trigger a custom `onSubmit` function.
+* `SystemKeyboard` now has an `addNumberToolbar` parameter to add a number toolbar in KeyboardKit Pro.
+* The iPad Pro layout has been tweaked to look more native, and is now used by all these locales as well:
+* `Catalan`, `Czech`, `Danish`, `Faroese`, `Finnish`, `Georgian`, `German`, `German (Austria)`, `German (Switzerland)`, `Greek`, `Hawaiian`, `Icelandic`, `Inari Sámi`, `Macedonian`, `Maltese`, `Mongolian`, `Northern Sámi`, `Norwegian`, `Russian`, `Serbian`, `Slovak`, `Turkish`, `Ukrainian`.
+
+### 🗑️ Deprecations
+
+* `Callouts.ButtonArea` has been deprecated.
+* `Callouts.Curve` has been deprecated.
+* `Emoji.Grid` has been moved to `EmojiKit`.
+* `KeyboardStyleProvider.buttonContentBottomMargin` is no longer used.
 
 
 

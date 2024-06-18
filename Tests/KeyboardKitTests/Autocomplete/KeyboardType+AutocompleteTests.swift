@@ -15,11 +15,11 @@ import UIKit
 
 class KeyboardType_AutocompleteTests: XCTestCase {
 
-    func prefersAutocompleteResult(for type: Keyboard.KeyboardType) -> Bool {
-        type.prefersAutocomplete
-    }
-
     func testKeyboardTypePrefersAutocomplete() {
+        func prefersAutocompleteResult(for type: Keyboard.KeyboardType) -> Bool {
+            type.prefersAutocomplete
+        }
+        
         XCTAssertTrue(prefersAutocompleteResult(for: .alphabetic(.lowercased)))
         XCTAssertTrue(prefersAutocompleteResult(for: .numeric))
         XCTAssertTrue(prefersAutocompleteResult(for: .symbolic))
@@ -30,12 +30,12 @@ class KeyboardType_AutocompleteTests: XCTestCase {
     }
 
 
-    #if os(iOS) || os(tvOS)
-    func prefersAutocompleteResult(for type: UIKeyboardType) -> Bool {
-        type.prefersAutocomplete
-    }
-
+    #if os(iOS) || os(tvOS) || os(visionOS)
     func testNativeKeyboardTypePrefersAutocomplete() {
+        func prefersAutocompleteResult(for type: UIKeyboardType) -> Bool {
+            type.prefersAutocomplete
+        }
+        
         XCTAssertTrue(prefersAutocompleteResult(for: .default))
         XCTAssertTrue(prefersAutocompleteResult(for: .alphabet))
         XCTAssertFalse(prefersAutocompleteResult(for: .asciiCapableNumberPad))

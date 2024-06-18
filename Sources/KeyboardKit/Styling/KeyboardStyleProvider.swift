@@ -9,22 +9,21 @@
 import CoreGraphics
 import SwiftUI
 
-/**
- This protocol can be implemented by classes that can define
- styles for different parts of a keyboard.
- 
- KeyboardKit will register a ``StandardKeyboardStyleProvider``
- with ``KeyboardInputViewController/services``.
- 
- To change the style of some parts of your keyboard, you can
- implement a custom style provider.
- 
- To create a custom implementation of this protocol, you can
- either implement the protocol from scratch, or subclass the
- standard class and override what you want to change. Inject
- it into ``KeyboardInputViewController/services`` to make it
- be used as the global default.
- */
+/// This protocol can be implemented by any classes that can
+/// provide dynamic keyboard styles.
+///
+/// While most views in the library have view modifiers that
+/// apply their specific styles, some views are more complex
+/// and require more dynamic styling, at least for now. This
+/// protocol lets us register a global style provider, which
+/// then is used to style e.g. the ``SystemKeyboard``.
+///
+/// KeyboardKit will automatically setup a standard protocol
+/// implementation in ``KeyboardInputViewController/services``
+/// when the keyboard is launched. You can change or replace
+/// it at any time to customize the keyboard action behavior.
+///
+/// See <doc:Styling-Article> for more information.
 public protocol KeyboardStyleProvider: AnyObject {
 
     /// The background style to apply to the entire keyboard.
@@ -42,7 +41,7 @@ public protocol KeyboardStyleProvider: AnyObject {
     /// The overall insets action's content.
     func buttonContentInsets(for action: KeyboardAction) -> EdgeInsets
 
-    /// The additional bottom margin for an action's content.
+    @available(*, deprecated, message: "This is no longer used. Use buttonContentInsets.")
     func buttonContentBottomMargin(for action: KeyboardAction) -> CGFloat
 
     /// The button image to use for a certain action.

@@ -88,23 +88,36 @@ You can take a look at the source code of the various views in the library for i
         
         @Row {
             @Column {
-                ![System Keyboard Preview - Turkish](systemkeyboardpreview.jpg)
+                ![System Keyboard Preview - Turkish](systemkeyboardpreview)
             }
             @Column {
-                ![System Keyboard Preview - Theme](systemkeyboardpreview-theme.jpg)
+                ![System Keyboard Preview - Theme](systemkeyboardpreview-theme)
             }
         }
         
         This preview is intended to be used in the main app, to for instance provide interactive previews in a settings screen. Since it draws a full keyboard with all interactions enabled, avoid displaying more one at a time.
-    }
-    
-    @Tab("SystemKeyboardButtonPreview") {
         
-        KeyboardKit Pro also unlocks a more lightweight ``SystemKeyboardButtonPreview`` that can be used to preview many buttons at once, for instance to preview multiple styles or ``KeyboardTheme``s at once:
+        If you want to display several previews at once, consider using the  more lightweight ``SystemKeyboardButtonPreview`` instead:
         
-        ![System Keyboard Button Preview](systemkeyboardbuttonpreview-350.jpg)
-
-        Unlike the ``SystemKeyboardPreview``, this view just renders a very lightweight button preview, and is perfect for being used in style or theme pickers, to quickly visualize how certain button types look for a certain configuration, etc.
+        @Row {
+            @Column {}
+            @Column(size: 2) {
+                ![System Keyboard Button Preview](systemkeyboardbuttonpreview)
+            }
+            @Column {}
+        }
+        
+        Unlike ``SystemKeyboardPreview``, this view renders a very lightweight button preview. It's for instance used in the theme ``KeyboardTheme/Shelf``, to display a button preview for all available themes:
+        
+        @Row {
+            @Column {}
+            @Column(size: 2) {
+                ![Theme Shelf](themeshelf)
+            }
+            @Column {}
+        }
+        
+        
 
     }
 }

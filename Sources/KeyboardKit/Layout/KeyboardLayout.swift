@@ -9,43 +9,49 @@
 import CoreGraphics
 import SwiftUI
 
-/// A keyboard layout contains the full set of keyboard keys
-/// that should be rendered for a keyboard.
+/// This type defines the full set of keys on a keyboard and
+/// serves as a namespace for layout-related types.
 ///
 /// A layout also specifies sizes, alignments, etc. which is
 /// required information when rendering a keyboard.
+///
+/// You can use the ``itemRows`` property to modify a layout,
+/// e.g. with the various insert, replace & remove functions.
 public class KeyboardLayout {
 
     /// Create a new layout with the provided items.
     ///
     /// - Parameters:
     ///   - itemRows: The items to add to the keyboard.
+    ///   - iPadProLayout: Whether the layout is iPad Pro specific.
     ///   - idealItemHeight: An optional, ideal item height, otherwise picked from the first item.
     ///   - idealItemInsets: An optional, ideal item inset value, otherwise picked from the first item.
     public init(
-        itemRows rows: KeyboardLayout.ItemRows,
+        itemRows rows: ItemRows,
+        iPadProLayout: Bool = false,
         idealItemHeight height: Double? = nil,
         idealItemInsets insets: EdgeInsets? = nil
     ) {
         self.itemRows = rows
+        self.ipadProLayout = iPadProLayout
         self.idealItemHeight = height ?? Self.resolveIdealItemHeight(for: rows)
         self.idealItemInsets = insets ?? Self.resolveIdealItemInsets(for: rows)
     }
 
     /// The layout item rows to show in the keyboard.
-    public var itemRows: KeyboardLayout.ItemRows
+    public var itemRows: ItemRows
 
     /// The ideal item height.
     public var idealItemHeight: Double
 
     /// The ideal item inserts.
     public var idealItemInsets: EdgeInsets
+    
+    /// Whether this is an iPad Pro layout.
+    public var ipadProLayout: Bool
 
     /// A `CGFloat` typealias for the total keyboard width.
     public typealias TotalWidth = CGFloat
-    
-    /// Whether or not this is an iPad Pro layout.
-    var ipadProLayout = false
 
     /// A cache used to avoid having to recalculate widths.
     var widthCache = [TotalWidth: CGFloat]()
@@ -53,12 +59,16 @@ public class KeyboardLayout {
 
 private extension KeyboardLayout {
 
-    static func resolveIdealItemHeight(for rows: KeyboardLayout.ItemRows) -> Double {
+    static func resolveIdealItemHeight(
+        for rows: KeyboardLayout.ItemRows
+    ) -> Double {
         let item = rows.flatMap { $0 }.first
         return Double(item?.size.height ?? .zero)
     }
 
-    static func resolveIdealItemInsets(for rows: KeyboardLayout.ItemRows) -> EdgeInsets {
+    static func resolveIdealItemInsets(
+        for rows: KeyboardLayout.ItemRows
+    ) -> EdgeInsets {
         let item = rows.flatMap { $0 }.first
         return item?.edgeInsets ?? EdgeInsets()
     }

@@ -29,11 +29,21 @@ KeyboardKit uses different names for different ways to style keyboards.
 
 
 
-## Styling namespace
+## KeyboardStyle namespace
 
-KeyboardKit has a ``Styling`` namespace that contains styling-related types.
+KeyboardKit has a ``KeyboardStyle`` namespace that contains style-related types.
 
-This namespace doesn't contain protocols, open classes or types of higher importance.
+
+
+## Keyboard style providers
+
+In KeyboardKit, a ``KeyboardStyleProvider`` is used to return dynamic styles for different parts of the keyboard. Unlike static styles, a style provider can vary styles depending on ``KeyboardContext``, ``KeyboardAction``, etc. 
+
+More complex components, like ``SystemKeyboard``, does not yet use view modifiers, but instead use a ``KeyboardStyleProvider`` to apply dynamic, contextual, styles based on internal and external state.
+
+KeyboardKit automatically creates an instance of ``KeyboardStyle/StandardProvider`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time, as described further down.
+
+> Important: Views like ``SystemKeyboard`` will apply style modifiers to any view that it renders. This means that you can't apply these view modifiers to the ``SystemKeyboard``. You can however apply style modifiers to views that you create in view builders.
 
 
 
@@ -56,21 +66,6 @@ Have a look at the <doc:Colors-Article> and <doc:Images-Article> articles for mo
 
 
 
-## Keyboard appearance
-
-A keyboard appearance is used to determine if a keyboard is light or dark. This is not the same thing as the *color scheme*. A keyboard can be defined as "dark" even in light mode, and will render slightly darker than the default keyboard.
-
-KeyboardKit has a ``Styling/KeyboardAppearanceViewModifier`` that can be used to apply a keyboard appearance to a view, using the ``SwiftUI/View/keyboardAppearance(_:)`` view modifier:
-
-```
-TextField("Enter text", text: $text)
-    .keyboardAppearance(.dark)
-```
-
-Note that applying a dark appearances will make iOS tell the extension that the *color scheme* is dark, while this may in fact not be true. This will lead to visual bugs, that require certain workarounds. See the <doc:Colors-Article> article for more information.
-
-
-
 ## View styles
 
 KeyboardKit defines custom styles for its various view. For instance, the ``Keyboard`` ``Keyboard/Button`` view has a ``Keyboard/ButtonStyle`` that can be applied with the ``SwiftUI/View/keyboardButtonStyle(_:)`` view modifier.
@@ -79,26 +74,14 @@ Most views have static, standard styles that can be replaced by custom styles to
 
 
 
-## Style providers
-
-In KeyboardKit, a ``KeyboardStyleProvider`` is used to return dynamic styles for different parts of the keyboard. Unlike static styles, a style provider can vary styles depending on ``KeyboardContext``, ``KeyboardAction``, etc. 
-
-More complex components, like ``SystemKeyboard``, does not yet use view modifiers, but instead use a ``KeyboardStyleProvider`` to apply dynamic, contextual, styles based on internal and external state.
-
-KeyboardKit injects a ``StandardKeyboardStyleProvider`` into ``KeyboardInputViewController/services``. You can modify or replace this instance at any time.
-
-> Important: Views like ``SystemKeyboard`` will apply style provider-based view modifiers to any view that it renders. This means that you can't apply these view modifiers to the ``SystemKeyboard``. You can however add custom styles to the views you provide in the various view builders, so use this approach if you want to style individual parts of these more complex views.  
-
-
-
 ## How to create a custom style provider
 
-You can create a custom style provider to customize any style in any way you want. You can implement ``KeyboardStyleProvider`` from scratch, or inherit and customize ``StandardKeyboardStyleProvider``.
+You can create a custom style provider to customize any style in any way you want. You can implement ``KeyboardStyleProvider`` from scratch, or inherit and customize ``KeyboardStyle/StandardProvider``.
 
-For instance, here's a custom provider that inherits ``StandardKeyboardStyleProvider`` and makes all input buttons red:
+For instance, here's a custom provider that inherits ``KeyboardStyle/StandardProvider`` and makes all input buttons red:
 
 ```swift
-class CustomKeyboardStyleProvider: StandardKeyboardStyleProvider {
+class CustomKeyboardStyleProvider: KeyboardStyle.StandardProvider {
     
     override func buttonStyle(
         for action: KeyboardAction,
@@ -130,9 +113,14 @@ This will make KeyboardKit use your custom implementation instead of the standar
 
 ## 👑 KeyboardKit Pro
 
-[KeyboardKit Pro][Pro] unlocks a theme engine and a ``KeyboardTheme`` type, that makes it a lot easier to style your keyboard with themes.
-
-See the <doc:Themes-Article> article for more information.
-
+[KeyboardKit Pro][Pro] unlocks a theme engine and a ``KeyboardTheme``, that makes it a lot easier to style your keyboard with themes.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro
+
+@Row {
+    @Column { ![Standard Green Theme](standard-green) }
+    @Column { ![Swifty Blue Theme](swifty-blue) }
+    @Column { ![Cotton Candy Theme](candyshop-cottoncandy) }
+}
+
+See the <doc:Themes-Article> article for more information.

@@ -36,6 +36,7 @@ public extension KeyboardLocale {
         case .finnish: "🇫🇮"
         case .french: "🇫🇷"
             
+        case .french_canada: "🇨🇦"
         case .french_belgium: "🇧🇪"
         case .french_switzerland: "🇨🇭"
         case .georgian: "🇬🇪"
@@ -45,10 +46,10 @@ public extension KeyboardLocale {
         case .greek: "🇬🇷"
         case .hawaiian: "🇺🇸"
         case .hebrew: "🇮🇱"
-        case .hungarian: "🇭🇺"
             
+        case .hungarian: "🇭🇺"
         case .icelandic: "🇮🇸"
-        case .inariSami: "🏳️"
+        case .inari_sami: "🏳️"
         case .indonesian: "🇮🇩"
         case .irish: "🇮🇪"
         case .italian: "🇮🇹"
@@ -56,19 +57,20 @@ public extension KeyboardLocale {
         case .kurdish_sorani: "🇹🇯"
         case .kurdish_sorani_arabic: "🇹🇯"
         case .kurdish_sorani_pc: "🇹🇯"
-        case .latvian: "🇱🇻"
             
+        case .latvian: "🇱🇻"
         case .lithuanian: "🇱🇹"
         case .macedonian: "🇲🇰"
         case .malay: "🇲🇾"
         case .maltese: "🇲🇹"
         case .mongolian: "🇲🇳"
+        case .northern_sami: "🏳️"
         case .norwegian: "🇳🇴"
-        case .northernSami: "🏳️"
+        case .norwegian_nynorsk: "🇳🇴"
         case .persian: "🇮🇷"
+            
         case .polish: "🇵🇱"
         case .portuguese: "🇵🇹"
-            
         case .portuguese_brazil: "🇧🇷"
         case .romanian: "🇷🇴"
         case .russian: "🇷🇺"
@@ -77,12 +79,15 @@ public extension KeyboardLocale {
         case .slovenian: "🇸🇮"
         case .slovak: "🇸🇰"
         case .spanish: "🇪🇸"
+            
+        case .spanish_latinAmerica: "🇦🇷"
+        case .spanish_mexico: "🇲🇽"
         case .swedish: "🇸🇪"
         case .swahili: "🇰🇪"
-            
         case .turkish: "🇹🇷"
         case .ukrainian: "🇺🇦"
         case .uzbek: "🇺🇿"
+        case .welsh: "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
         }
     }
 }

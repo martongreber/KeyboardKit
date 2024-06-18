@@ -11,7 +11,7 @@ import SwiftUI
 
 public extension CalloutContext {
     
-    /// This class provides observable action callout state.
+    /// This class has observable action callout state.
     class ActionContext: ObservableObject {
         
         /// Create an action callout context instance.
@@ -55,7 +55,6 @@ public extension CalloutContext {
         @Published
         public private(set) var selectedIndex: Int = -1
     }
-    
 }
 
 
@@ -102,7 +101,7 @@ public extension CalloutContext.ActionContext {
     
     /// Trigger haptic feedback for selection change.
     func triggerHapticFeedbackForSelectionChange() {
-        HapticFeedback.selectionChanged.trigger()
+        Feedback.Haptic.selectionChanged.trigger()
     }
     
     /// Update the input actions for a certain action.

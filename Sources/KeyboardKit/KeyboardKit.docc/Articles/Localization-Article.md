@@ -25,9 +25,9 @@ In KeyboardKit, each ``KeyboardLocale`` defines localized strings, assets, and l
 
 ## Supported locales
 
-KeyboardKit supports 63 keyboard-specific ``KeyboardLocale``s, like ``KeyboardLocale/english``, ``KeyboardLocale/swedish``, and ``KeyboardLocale/persian``:
+KeyboardKit supports **68** keyboard-specific ``KeyboardLocale``s, like ``KeyboardLocale/english``, ``KeyboardLocale/swedish``, and ``KeyboardLocale/persian``:
 
-🇦🇱 🇦🇪 🇦🇲 🇧🇾 🇧🇬 🇦🇩 🏳️ 🇭🇷 🇨🇿 🇩🇰 🇳🇱 🇧🇪 🇺🇸 🇬🇧 🇺🇸 🇪🇪 🇫🇴 🇵🇭 🇫🇮 🇫🇷 🇧🇪 🇨🇭 🇬🇪 🇩🇪 🇦🇹 🇨🇭 🇬🇷 🇺🇸 🇮🇱 🇭🇺 🇮🇸 🏳️ 🇮🇩 🇮🇪 🇮🇹 🇰🇿 🇹🇯 🇹🇯 🇹🇯 🇱🇻 🇱🇹 🇲🇰 🇲🇾 🇲🇹 🇲🇳 🇳🇴 🏳️ 🇮🇷 🇵🇱 🇵🇹 🇧🇷 🇷🇴 🇷🇺 🇷🇸 🇷🇸 🇸🇰 🇸🇮 🇪🇸 🇰🇪 🇸🇪 🇹🇷 🇺🇦 🇺🇿 <br />
+🇦🇱 🇦🇪 🇦🇲 🇧🇾 🇧🇬 🇦🇩 🏳️ 🇭🇷 🇨🇿 🇩🇰 🇳🇱 🇧🇪 🇺🇸 🇬🇧 🇺🇸 🇪🇪 🇫🇴 🇵🇭 🇫🇮 🇫🇷 🇨🇦 🇧🇪 🇨🇭 🇬🇪 🇩🇪 🇦🇹 🇨🇭 🇬🇷 🇺🇸 🇮🇱 🇭🇺 🇮🇸 🏳️ 🇮🇩 🇮🇪 🇮🇹 🇰🇿 🇹🇯 🇹🇯 🇹🇯 🇱🇻 🇱🇹 🇲🇰 🇲🇾 🇲🇹 🇲🇳 🏳️ 🇳🇴 🇳🇴 🇮🇷 🇵🇱 🇵🇹 🇧🇷 🇷🇴 🇷🇺 🇷🇸 🇷🇸 🇸🇰 🇸🇮 🇪🇸 🇦🇷 🇲🇽 🇰🇪 🇸🇪 🇹🇷 🇺🇦 🇺🇿 🏴󠁧󠁢󠁷󠁬󠁳󠁿 <br />
 
 
 ## Locale capabilities
@@ -98,19 +98,23 @@ For information on how to add new keyboard locales, see **Instructions.md** in *
 
 ## Views
 
+The ``KeyboardLocale`` namespace has locale-specific views, that can be used to perform native locale operations, pick locales, etc.
+
 @TabNavigator {
     
-    @Tab("LocaleContextMenu") {
+    @Tab("ContextMenu") {
+        
+        KeyboardKit has a ``KeyboardLocale/ContextMenu`` that can be used to change the main ``KeyboardContext`` ``KeyboardContext/locale`` from a callout context menu: 
+        
         @Row {
+            @Column {}
             @Column(size: 2) {
-                KeyboardKit has a ``LocaleContextMenu`` that can be used to pick a locale and apply it to the main ``KeyboardContext``'s ``KeyboardContext/locale``.
-                
-                The menu can be applied to any view, and is used by ``SystemKeyboard`` to apply it to any key that is configured to trigger the ``KeyboardAction/nextLocale`` action.
+                ![Locale Context Menu](localecontextmenu)
             }
-            @Column {
-                ![LocaleContextMenu](localecontextmenu-350.jpg)
-            }
+            @Column {}
         }
+        
+        This menu can be applied to any view. It's applied by ``SystemKeyboard`` to every key that triggers the ``KeyboardAction/nextLocale`` action, as well as to the space bar, if the ``Gestures/SpaceLongPressBehavior`` is set to ``Gestures/SpaceLongPressBehavior/openLocaleContextMenu``.
     }
 }
 
@@ -120,5 +124,7 @@ For information on how to add new keyboard locales, see **Instructions.md** in *
 [KeyboardKit Pro][Pro] unlocks fully localized ``InputSet``, ``KeyboardLayoutProvider`` & ``CalloutActionProvider`` implementations for every locale in your license. 
 
 This lets KeyboardKit Pro create fully localized ``SystemKeyboard`` for every supported locale, with no additional code needed. You can customize any input set or provider for any locale at any time, whenever needed.
+
+After setting up KeyboardKit Pro with your license key, as described in the <doc:Getting-Started> article, you can just change the ``KeyboardContext/locale`` to a locale in your license to automatically update the system keyboard to that locale.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro

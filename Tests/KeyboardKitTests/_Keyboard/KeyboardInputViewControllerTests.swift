@@ -111,10 +111,10 @@ class KeyboardInputViewControllerTests: XCTestCase {
             XCTAssertTrue(vc.state.autocompleteContext.suggestions.isEmpty)
             XCTAssertEqual(vc.state.calloutContext.inputContext.buttonFrame, .zero)
             XCTAssertFalse(vc.state.keyboardContext.hasFullAccess)
-            XCTAssertEqual(vc.state.keyboardContext.keyboardType, .alphabetic(.lowercased))
+            XCTAssertEqual(vc.state.keyboardContext.keyboardType, .alphabetic(.auto))
             XCTAssertFalse(vc.state.keyboardContext.needsInputModeSwitchKey)
-            XCTAssertEqual(vc.state.feedbackConfiguration.audio, .enabled)
-            XCTAssertEqual(vc.state.feedbackConfiguration.haptic, .minimal)
+            XCTAssertEqual(vc.state.feedbackContext.audioConfiguration, .enabled)
+            XCTAssertEqual(vc.state.feedbackContext.hapticConfiguration, .minimal)
         }
     }
 
@@ -122,13 +122,13 @@ class KeyboardInputViewControllerTests: XCTestCase {
     // MARK: - Services
 
     func servicesHaveStandardInstancesByDefault() {
-        XCTAssertNotNil(vc.services.actionHandler as? StandardKeyboardActionHandler)
+        XCTAssertNotNil(vc.services.actionHandler as? KeyboardAction.StandardHandler)
         XCTAssertNotNil(vc.services.autocompleteProvider as? Autocomplete.DisabledProvider)
-        XCTAssertNotNil(vc.services.calloutActionProvider as? StandardCalloutActionProvider)
+        XCTAssertNotNil(vc.services.calloutActionProvider as? Callouts.StandardActionProvider)
         XCTAssertNotNil(vc.services.dictationService as? Dictation.DisabledKeyboardService)
-        XCTAssertNotNil(vc.services.keyboardBehavior as? StandardKeyboardBehavior)
-        XCTAssertNotNil(vc.services.layoutProvider as? StandardKeyboardLayoutProvider)
-        XCTAssertNotNil(vc.services.styleProvider as? StandardKeyboardStyleProvider)
+        XCTAssertNotNil(vc.services.keyboardBehavior as? Keyboard.StandardBehavior)
+        XCTAssertNotNil(vc.services.layoutProvider as? KeyboardLayout.StandardProvider)
+        XCTAssertNotNil(vc.services.styleProvider as? KeyboardStyle.StandardProvider)
     }
     
     func testRefreshingPropertiesWhenChangingServicePropertiesIsDoneForKeyboardActionHandler() {
@@ -140,7 +140,7 @@ class KeyboardInputViewControllerTests: XCTestCase {
 
     func testRefreshingPropertiesWhenChangingServicePropertiesIsForCalloutActionProvider() {
         let vc = TestClass()
-        vc.services.calloutActionProvider = StandardCalloutActionProvider(keyboardContext: .preview)
+        vc.services.calloutActionProvider = Callouts.StandardActionProvider(keyboardContext: .preview)
         let actionContext = vc.state.calloutContext.actionContext
         XCTAssertTrue(actionContext.actionProvider === vc.services.calloutActionProvider)
     }
@@ -202,7 +202,7 @@ class KeyboardInputViewControllerTests: XCTestCase {
         setupMocksForAutocomplete(for: vc)
         mockTextDocumentProxy.documentContextBeforeInput = "foo"
         mockTextDocumentProxy.documentContextAfterInput = "bar"
-        XCTAssertEqual(vc.autocompleteText, "foobar")
+        XCTAssertEqual(vc.autocompleteText, "foo")
     }
 
     func testIsAutocompleteEnabledIsTrueIfProxyIsNotReadingFullDocumentContext() {
@@ -246,7 +246,8 @@ class KeyboardInputViewControllerTests: XCTestCase {
         mockAutocompleteProvider.suggestions = [.init(text: "")]
         vc.performAutocomplete()
         eventually {
-            XCTAssertEqual(vc.state.autocompleteContext.suggestions.count, 0)
+            let suggestions = vc.state.autocompleteContext.suggestions
+            XCTAssertEqual(suggestions.count, 1)
         }
     }
 

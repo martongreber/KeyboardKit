@@ -8,12 +8,11 @@
 
 import Foundation
 
-/**
- This protocol is used to abstract the input view controller.
-
- ``KeyboardInputViewController`` implements this protocol by
- calling itself, its document proxy, or its keyboard context.
- */
+/// This protocol can be implemented by any classes that can
+/// be used to control a keyboard extension.
+///
+/// ``KeyboardInputViewController`` implements this protocol
+/// by using its text document proxy, state, and services.
 public protocol KeyboardController: AnyObject {
 
     /// Adjust the text input cursor position.
@@ -27,7 +26,10 @@ public protocol KeyboardController: AnyObject {
 
     /// Dismiss the keyboard.
     func dismissKeyboard()
-
+    
+    /// Insert the provided diacritic.
+    func insertDiacritic(_ diacritic: Keyboard.Diacritic)
+    
     /// Insert the provided text.
     func insertText(_ text: String)
 

@@ -8,14 +8,13 @@
 
 import Foundation
 
-/**
- This extension defines standard gesture actions for various
- keyboard actions and ``KeyboardInputViewController``s.
-
- The ``KeyboardAction/GestureAction`` typealias signature is
- using an optional ``KeyboardController`` since some classes
- will use this with a weak controller reference.
- */
+/// This extension defines standard gestures for the various
+/// keyboard actions.
+///
+///
+/// The ``KeyboardAction/GestureAction`` typealias signature
+/// uses an optional ``KeyboardController`` since some types
+/// will use this with a weak controller reference.
 public extension KeyboardAction {
     
     /// This typealias defines a controller gesture action.
@@ -36,6 +35,7 @@ public extension KeyboardAction {
         case .press: standardPressAction
         case .release: standardReleaseAction
         case .repeatPress: standardRepeatAction
+        case .end: nil
         }
     }
     
@@ -69,6 +69,7 @@ public extension KeyboardAction {
         switch self {
         case .character(let char): { $0?.insertText(char) }
         case .characterMargin(let char): { $0?.insertText(char) }
+        case .diacritic(let dia): { $0?.insertDiacritic(dia) }
         case .dictation: { $0?.performDictation() }
         case .dismissKeyboard: { $0?.dismissKeyboard() }
         case .emoji(let emoji): { $0?.insertText(emoji.char) }
@@ -80,6 +81,7 @@ public extension KeyboardAction {
         case .space: { $0?.insertText(.space) }
         case .systemSettings: { $0?.openUrl(.keyboardSettings) }
         case .tab: { $0?.insertText(.tab) }
+        case .text(let text): { $0?.insertText(text) }
         case .url(let url, _): { $0?.openUrl(url) }
         default: nil
         }

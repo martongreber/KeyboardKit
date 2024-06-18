@@ -11,7 +11,7 @@ import SwiftUI
 
 public extension KeyboardAction {
     
-    /// The standard button image for thre action.
+    /// The standard button image for the action.
     func standardButtonImage(
         for context: KeyboardContext
     ) -> Image? {
@@ -21,12 +21,13 @@ public extension KeyboardAction {
         }
     }
     
-    /// The standard button text for thre action.
+    /// The standard button text for the action.
     func standardButtonText(
         for context: KeyboardContext
     ) -> String? {
         switch self {
         case .character(let char): standardButtonText(for: char)
+        case .diacritic(let dia): dia.char
         case .emoji(let emoji): emoji.char
         case .keyboardType(let type): type.standardButtonText(for: context)
         case .nextLocale: context.locale.languageCode?.uppercased()

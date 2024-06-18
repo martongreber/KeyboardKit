@@ -16,11 +16,6 @@ import SwiftUI
 /// by returning `$0.view` where the default views should be
 /// used, or return custom views. This view will replace the
 /// default toolbar with a Pro toggle toolbar.
-///
-/// > Important: When you customize your view, you must make
-/// it observe the `KeyboardContext`. If you don't, the view
-/// will not detect any changes in the context, and will not
-/// update itself.
 struct DemoKeyboardView: View {
     
     unowned var controller: KeyboardInputViewController
@@ -55,10 +50,10 @@ struct DemoKeyboardView: View {
 
 private extension DemoKeyboardView {
     
-    var keyboardServices: Keyboard.KeyboardServices {
+    var keyboardServices: Keyboard.Services {
         let services = controller.services
         if let theme {
-            if let provider = try? ThemeBasedKeyboardStyleProvider(
+            if let provider = try? KeyboardStyle.ThemeBasedProvider(
                 theme: theme,
                 keyboardContext: controller.state.keyboardContext
             ) {

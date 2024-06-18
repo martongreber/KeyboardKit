@@ -122,6 +122,7 @@ class KeyboardLocale_DirectionTests: XCTestCase {
             .finnish: (true, false),
             .french: (true, false),
             .french_belgium: (true, false),
+            .french_canada: (true, false),
             .french_switzerland: (true, false),
             .georgian: (true, false),
             .german: (true, false),
@@ -132,7 +133,7 @@ class KeyboardLocale_DirectionTests: XCTestCase {
             .hebrew: (false, true),
             .hungarian: (true, false),
             .icelandic: (true, false),
-            .inariSami: (true, false),
+            .inari_sami: (true, false),
             .indonesian: (true, false),
             .irish: (true, false),
             .italian: (true, false),
@@ -146,8 +147,9 @@ class KeyboardLocale_DirectionTests: XCTestCase {
             .malay: (true, false),
             .maltese: (true, false),
             .mongolian: (true, false),
-            .northernSami: (true, false),
+            .northern_sami: (true, false),
             .norwegian: (true, false),
+            .norwegian_nynorsk: (true, false),
             .persian: (false, true),
             .polish: (true, false),
             .portuguese: (true, false),
@@ -159,11 +161,14 @@ class KeyboardLocale_DirectionTests: XCTestCase {
             .slovenian: (true, false),
             .slovak: (true, false),
             .spanish: (true, false),
+            .spanish_latinAmerica: (true, false),
+            .spanish_mexico: (true, false),
             .swahili: (true, false),
             .swedish: (true, false),
             .turkish: (true, false),
             .ukrainian: (true, false),
-            .uzbek: (true, false)
+            .uzbek: (true, false),
+            .welsh: (true, false)
         ]
 
         XCTAssertEqual(result.keys, expected.keys)

@@ -27,8 +27,6 @@ KeyboardKit has ways to automatically show an ``Callouts/InputCallout`` when the
 
 KeyboardKit has a ``Callouts`` namespace that has callout-related types and views. For instance, an ``Callouts/InputCallout`` can present the currently pressed character while an ``Callouts/ActionCallout`` can present secondary actions while long pressing a key.
 
-This namespace doesn't contain protocols, open classes or types of higher importance.
-
 
 
 ## Callout context
@@ -39,13 +37,11 @@ KeyboardKit automatically creates an instance of this class and injects it into 
 
 
 
-## How to provide callout actions
+## Callout action providers
 
 In KeyboardKit, a ``CalloutActionProvider`` can be used to provide dynamic callout actions, which are then presented when a key that has actions defined in the provider is long pressed.
 
-KeyboardKit injects a ``StandardCalloutActionProvider`` into ``KeyboardInputViewController/services``. You can modify or replace this instance at any time.
-
-You can add and replace localized providers to the ``StandardCalloutActionProvider``, or replace the ``KeyboardInputViewController/services`` provider with a custom ``CalloutActionProvider``.
+KeyboardKit automatically creates an instance of ``Callouts/StandardActionProvider`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time, as described further down, or inject localized providers into it.
 
 
 
@@ -68,12 +64,12 @@ The ``SystemKeyboard`` and ``Keyboard/Button`` will automatically apply the prop
 
 ## How to create a custom callout action provider
 
-You can create a custom callout action provider to customize the callout actions to present for a certain ``KeyboardAction``. You can implement ``CalloutActionProvider`` from scratch, or inherit and customize ``StandardCalloutActionProvider``.
+You can create a custom ``CalloutActionProvider`` to customize which callout actions to present for certain ``KeyboardAction``s.
 
-For instance, here's a custom provider that inherits ``StandardCalloutActionProvider`` and customizes the actions for the $ key:
+You can implement ``CalloutActionProvider`` from scratch, or inherit and customize the ``Callouts/StandardActionProvider``. For instance, here's a custom callout action provider that inherits ``Callouts/StandardActionProvider`` and customizes the actions for the $ key:
 
 ```swift
-class CustomCalloutActionProvider: StandardCalloutActionProvider {
+class CustomCalloutActionProvider: Callout.StandardActionProvider {
     
     override func calloutActions(for action: KeyboardAction) -> [KeyboardAction] {
         switch action {
@@ -107,41 +103,48 @@ This will make KeyboardKit use your custom implementation instead of the standar
 
 ## Views
 
+The ``Callouts`` namespace has callout-specific views, that can be used to mimic the native iOS & iPadOS input and action callouts.
+
 @TabNavigator {
     
-    @Tab("Callouts.ActionCallout") {
+    @Tab("Action Callout") {
         
-        KeyboardKit has an ``Callouts/ActionCallout`` that mimics a native action callout and can be used to present secondary actions for any key:
+        The ``Callouts/ActionCallout`` view mimics a native action callout, and can present secondary actions when a keyboard key is long-pressed:
         
-        ![ActionCallout](actioncallout-350.jpg)
+        @Row {
+            @Column { }
+            @Column(size: 2) { ![ActionCallout](actioncallout) }
+            @Column { }
+        }
         
         The view can be styled with a ``Callouts/ActionCalloutStyle``, which is applied with the ``SwiftUI/View/actionCalloutStyle(_:)`` view modifier.
     }
     
-    @Tab("Callouts.InputCallout") {
+    @Tab("Input Callout") {
         
-        KeyboardKit has an ``Callouts/InputCallout`` that mimics a native input callout and can be used to show the currently pressed key:
+        The ``Callouts/InputCallout`` view mimics a native input callout, and can be used to show the currently pressed key as the user types:
         
-        ![InputCallout](inputcallout-350.jpg)  
+        @Row {
+            @Column { }
+            @Column(size: 2) { ![InputCallout](inputcallout) }
+            @Column { }
+        }  
         
         The view can be styled with a ``Callouts/InputCalloutStyle``, which can be applied with the ``SwiftUI/View/inputCalloutStyle(_:)`` view modifier.
     }
 }
-
-See the <doc:Styling-Article> article for more information about how styling is handled in KeyboardKit.
 
 
 
 
 ## 👑 KeyboardKit Pro
 
-[KeyboardKit Pro][Pro] unlocks a localized ``CalloutActionProvider`` for every locale in your license, and automatically injects them into the ``StandardCalloutActionProvider``.
+[KeyboardKit Pro][Pro] unlocks a localized ``CalloutActionProvider`` for every locale in your license
 
-You can access all localized providers in your license, or any specific provider, like this:
+You can access any provider in your license like this:
 
 ```swift
-let providers = License.current.localizedCalloutActionProviders
-let provider = try ProCalloutActionProvider.Swedish()
+let provider = try Callouts.ProActionProvider.Swedish()
 ```
 
 > Important: These providers will throw a license error if their locale is not included in the license.
@@ -152,7 +155,7 @@ let provider = try ProCalloutActionProvider.Swedish()
 You can inherit and customize any localized provider, then manually register your provider *after* registering your license key:
 
 ```swift
-class CustomProvider: ProCalloutActionProvider.Swedish {
+class CustomProvider: Callouts.ProActionProvider.Swedish {
 
     override func calloutActionString(for char: String) -> String {
         switch char {
@@ -177,7 +180,7 @@ class KeyboardController: KeyboardInputViewController {
     func setupCustomProvider() {
         do {
             let provider = try CustomProvider()
-            let standard = services.calloutActionProvider as? StandardCalloutActionProvider
+            let standard = services.calloutActionProvider as? Callouts.StandardActionProvider
             standard?.registerLocalizedProvider(provider)
         } catch {
             print(error)

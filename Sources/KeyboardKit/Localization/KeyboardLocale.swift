@@ -9,16 +9,13 @@
 import Foundation
 
 /// This enum defines KeyboardKit-supported locales and is a
-/// namespace for related types.
+/// namespace for locale-elated types.
 ///
 /// Every keyboard locale refers to a native ``locale`` that
 /// provide locale-specific information. 
 ///
 /// A keyboard locale also defines localized assets that can
 /// be translated with ``KKL10n``.
-///
-/// The namespace doesn't contain protocols, open classes or
-/// types of higher importance.
 public enum KeyboardLocale: String, CaseIterable, Codable, Identifiable {
     
     /// Try to map a fuzzy name to a keyboard locale.
@@ -28,6 +25,22 @@ public enum KeyboardLocale: String, CaseIterable, Codable, Identifiable {
         let match = Self.allCases.first { fuzzyName.matches($0) }
         guard let match = match else { return nil }
         self = match
+    }
+    
+    /// Try to get a matching keyboard locale for a locale.
+    ///
+    /// If no exact match was found, the first locale with a
+    /// matching language code is returned.
+    public init?(
+        for locale: Locale
+    ) {
+        let exact = KeyboardLocale.all.first { $0.matches(locale) }
+        let fuzzy = KeyboardLocale.all.first { $0.matchesLanguage(in: locale) }
+        if let match = (exact ?? fuzzy) {
+            self = match
+        } else {
+            return nil
+        }
     }
     
     case english = "en"
@@ -51,6 +64,7 @@ public enum KeyboardLocale: String, CaseIterable, Codable, Identifiable {
     case filipino = "fil"
     case finnish = "fi"
     case french = "fr"
+    case french_canada = "fr_CA"
     case french_belgium = "fr_BE"
     case french_switzerland = "fr_CH"
     case georgian = "ka"
@@ -62,7 +76,7 @@ public enum KeyboardLocale: String, CaseIterable, Codable, Identifiable {
     case hebrew = "he_IL"
     case hungarian = "hu"
     case icelandic = "is"
-    case inariSami = "smn"
+    case inari_sami = "smn"
     case indonesian = "id"
     case irish = "ga_IE"
     case italian = "it"
@@ -76,8 +90,9 @@ public enum KeyboardLocale: String, CaseIterable, Codable, Identifiable {
     case malay = "ms"
     case maltese = "mt"
     case mongolian = "mn"
+    case northern_sami = "se"
     case norwegian = "nb"
-    case northernSami = "se"
+    case norwegian_nynorsk = "nn"
     case persian = "fa"
     case polish = "pl"
     case portuguese = "pt_PT"
@@ -89,11 +104,14 @@ public enum KeyboardLocale: String, CaseIterable, Codable, Identifiable {
     case slovak = "sk"
     case slovenian = "sl"
     case spanish = "es"
+    case spanish_latinAmerica = "es_419"
+    case spanish_mexico = "es_MX"
     case swedish = "sv"
     case swahili = "sw"
     case turkish = "tr"
     case ukrainian = "uk"
     case uzbek = "uz"
+    case welsh = "cy"
 }
 
 public extension KeyboardLocale {
@@ -138,6 +156,7 @@ public extension KeyboardLocale {
         case .french: "french"
 
         case .french_belgium: "french_belgium"
+        case .french_canada: "french_canada"
         case .french_switzerland: "french_switzerland"
         case .georgian: "georgian"
         case .german: "german"
@@ -146,10 +165,10 @@ public extension KeyboardLocale {
         case .greek: "greek"
         case .hawaiian: "hawaiian"
         case .hebrew: "hebrew"
+            
         case .hungarian: "hungarian"
-
         case .icelandic: "icelandic"
-        case .inariSami: "inariSami"
+        case .inari_sami: "inari_sami"
         case .indonesian: "indonesian"
         case .irish: "irish"
         case .italian: "italian"
@@ -157,19 +176,20 @@ public extension KeyboardLocale {
         case .kurdish_sorani: "kurdish_sorani"
         case .kurdish_sorani_arabic: "kurdish_sorani_arabic"
         case .kurdish_sorani_pc: "kurdish_sorani_pc"
+        
         case .latvian: "latvian"
-            
         case .lithuanian: "lithuanian"
         case .macedonian: "macedonian"
         case .malay: "malay"
         case .maltese: "maltese"
         case .mongolian: "mongolian"
-        case .northernSami: "northernSami"
+        case .northern_sami: "northern_sami"
         case .norwegian: "norwegian"
+        case .norwegian_nynorsk: "norwegian_nynorsk"
         case .persian: "persian"
+            
         case .polish: "polish"
         case .portuguese: "portuguese"
-            
         case .portuguese_brazil: "portuguese_brazil"
         case .romanian: "romanian"
         case .russian: "russian"
@@ -178,18 +198,26 @@ public extension KeyboardLocale {
         case .slovenian: "slovenian"
         case .slovak: "slovak"
         case .spanish: "spanish"
+            
+        case .spanish_latinAmerica: "spanish_latinAmerica"
+        case .spanish_mexico: "spanish_mexico"
         case .swedish: "swedish"
         case .swahili: "swahili"
-            
         case .turkish: "turkish"
         case .ukrainian: "ukrainian"
         case .uzbek: "uzbek"
+        case .welsh: "welsh"
         }
     }
-
-    /// Whether or not the locale matches a certain locale.
+    
+    /// Whether the locale matches a certain locale.
     func matches(_ locale: Locale) -> Bool {
         self.locale == locale
+    }
+    
+    /// Whether the locale language matches a certain locale.
+    func matchesLanguage(in locale: Locale) -> Bool {
+        self.locale.languageCode == locale.languageCode
     }
 }
 

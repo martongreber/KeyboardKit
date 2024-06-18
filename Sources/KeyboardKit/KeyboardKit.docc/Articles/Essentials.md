@@ -15,11 +15,9 @@ This article describes the essential parts of KeyboardKit.
 
 KeyboardKit extends Apple's native APIs and provides you with a lot more functionality. It lets you mimic the native iOS keyboard and tweak its style and behavior, or create completely custom keyboards.
 
-The essential goal for KeyboardKit is to make it easier to create powerful and flexible keyboards. As such, it has a bunch of essential tools and view, and extensions to native types, to make the native APIs more powerful.
+KeyboardKit also has a ``SystemKeyboard`` view that mimics the native iOS keyboard and can be customized & styled to great extent. Many of the tools and views in the SDK are used by the system keyboard.
 
-KeyboardKit also has a ``SystemKeyboard`` view that mimics the native iOS keyboard and can be customized & styled to great extent. Much of the views in the SDK are not used directly when you use a system keyboard.
-
-👑 [KeyboardKit Pro][Pro] unlocks a lot of essential Pro features. Information about these features can be found at the end of each article.
+👑 [KeyboardKit Pro][Pro] unlocks a lot of essential Pro features, such as a toggle toolbar, a system keyboard input toolbar, additional system keyboard views, previews, etc. Information about Pro features can be found at the end of this article.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro
 
@@ -27,11 +25,41 @@ KeyboardKit also has a ``SystemKeyboard`` view that mimics the native iOS keyboa
 
 ## Keyboard namespace
 
-KeyboardKit has a ``Keyboard`` namespace with a lot of keyboard-related types, such as ``Keyboard/AutocapitalizationType``, ``Keyboard/BackspaceRange``, ``Keyboard/Case``, ``Keyboard/KeyboardType``, ``Keyboard/ReturnKeyType``, etc. 
+KeyboardKit has a ``Keyboard`` namespace with a lot of keyboard-related types, such as ``Keyboard/AutocapitalizationType``, ``Keyboard/BackspaceRange``, ``Keyboard/Case``, ``Keyboard/Diacritic``, ``Keyboard/KeyboardType``, ``Keyboard/ReturnKeyType``, etc.
 
-Namespaces are used to make the surface API smaller, by nesting types together in logical groups. By typing ``Keyboard`` followed by a `.`, Xcode will provide you with a convenient list of types that are included in this essential namespace. 
+KeyboardKit uses namespaces to make the API surface smaller, by nesting types in logical groups. By typing ``Keyboard`` and `.`, Xcode will provide you with a list of all types in this essential namespace.
 
-This namespace doesn't contain protocols, open classes or types of higher importance.
+The same goes for other namespaces, like ``KeyboardAction``, ``KeyboardLayout``, ``Callouts``, ``Feedback``, etc. Most related types are nested in each namespace, except for protocols and important top-level types. 
+
+
+
+## Essential types
+
+Most types in the ``Keyboard`` namespace are essential to the core keyboard model, while the other namespaces extend it with more-specific features. The ``SystemKeyboard`` is also placed here, since it's a core (but optional) SDK component.
+
+Here's a list of some essential types that can be of interest when creating your own custom keyboard with KeyboardKit:
+
+* ``Keyboard/AutocapitalizationType`` - Can be used to control auto-capitalization in a keyboard.
+* ``Keyboard/BackspaceRange`` - Can be used to control how much to delete with the backspace key.
+* ``Keyboard/Button`` - A styleable button view that can be used to mimic a native keyboard key.
+* ``Keyboard/Case`` - Can be used to control the casing of an alphabetic keyboard.
+* ``Keyboard/Diacritic`` - Can be used to trigger ``KeyboardAction/diacritic(_:)`` actions to apply diacritics.
+* ``Keyboard/InputToolbarDisplayMode`` - Can be used to add an input toolbar on top of a ``SystemKeyboard``.
+* ``Keyboard/KeyboardType`` - Defines all keyboard types that are supported by the SDK.
+* ``Keyboard/NextKeyboardButton`` - Can be used to trigger the native keyboard switcher.
+* ``Keyboard/ReturnKeyType`` - Defines all return (primary) key types that are supported by the SDK.
+* ``Keyboard/Services`` - Is used to nest all services that are used by a KeyboardKit keyboard.
+* ``Keyboard/SpaceContent`` - Can be used to render the standard space button content.
+* ``Keyboard/StandardBehavior`` - The standard keyboard behavior, which defines how a keyboard behaves.
+* ``Keyboard/State`` - Is used to nest all observable state that is used by a KeyboardKit keyboard.
+* ``Keyboard/Toolbar`` - Can be used to render any content as a keyboard toolbar.
+
+There are also more essential types that are not wrapped in the ``Keyboard`` namespace:
+
+* ``KeyboardBehavior`` - Can be used to model the core behavior of a KeyboardKit keyboard.
+* ``KeyboardContext`` - Provides core observable state for a KeyboardKit keyboard.
+* ``KeyboardInputViewController`` - The most central type in KeyboardKit, used to add more features to the controller.
+* ``SystemKeyboard`` - A view that can be used to mimic the native iOS keyboard. Can be customized to great extent.
 
 
 
@@ -39,7 +67,7 @@ This namespace doesn't contain protocols, open classes or types of higher import
 
 ``KeyboardInputViewController`` is the most essential type in the library. Just make your **KeyboardController** inherit this class to get access to a bunch of additional capabilities and view lifecycle functions.
 
-KeyboardKit also has a ``KeyboardController`` protocol that aims to make it easier to use KeyboardKit in platforms that don't support UIKit. This is however not fully implemented yet.
+KeyboardKit also has a ``KeyboardController`` protocol that aims to make it easier to use KeyboardKit in platforms that don't support UIKit. This is however not fully implemented yet, although many types use it.
 
 
 
@@ -55,84 +83,104 @@ KeyboardKit automatically creates an instance of this class and injects it into 
 
 ## Keyboard behavior
 
-KeyboardKit has a ``KeyboardBehavior`` protocol that can be used to define the keyboard's behavior. It's used by e.g. the ``StandardKeyboardActionHandler`` to make behavior-based decisions.
+KeyboardKit has a ``KeyboardBehavior`` protocol that can be used to define the keyboard's behavior. It's used by some services, like the standard ``KeyboardActionHandler``, to make behavior-based decisions.
 
-KeyboardKit automatically creates a ``StandardKeyboardBehavior`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time.
+KeyboardKit automatically creates an instance of ``Keyboard/StandardBehavior`` and injects it into ``KeyboardInputViewController/services``. You can replace it at any time, by implementing the procotol from scratch or by inheriting and customizing the standard behavior.
 
 
 
-## Extensions
+## Keyboard appearance
+
+A keyboard appearance is used to determine if a keyboard is light or dark. This is not the same thing as the *color scheme*. A keyboard can be defined as "dark" even in light mode, and will render slightly darker than the default keyboard.
+
+KeyboardKit has an ``Keyboard/AppearanceViewModifier`` that can be applied with the ``SwiftUI/View/keyboardAppearance(_:)`` view modifier:
+
+```
+TextField("Enter text", text: $text)
+    .keyboardAppearance(.dark)
+```
+
+Note that applying a dark appearances will make iOS tell the extension that the *color scheme* is dark, while this may in fact not be true. This will lead to visual bugs, that require workarounds. See the <doc:Colors-Article> article for more information.
+
+
+
+## Native Extensions
 
 KeyboardKit extends native types with a lot more information, to make it easier to implement features like autocomplete, text analysis, etc. Check the extension section in the bottom of the documentation root, or the `Extensions` folder for more info.
 
+For instance, KeyboardKit extends types in ``Foundation``, ``Swift``, ``SwiftUI``, and other platform-specific frameworks.
+
+
+
+## System Keyboard
+
+KeyboardKit has a ``SystemKeyboard`` that mimics a native iOS keyboard. It can be used for alphabetic, numeric & symbolic keyboards, supports all supported locales, layouts, callouts, etc., and can be styled to great extent with styles & themes:
+
+@Row {
+    
+    @Column {
+        ![SystemKeyboard](systemkeyboard-english)
+    }
+    
+    @Column {
+        ![SystemKeyboard](systemkeyboard-swedish)
+    }
+    
+    @Column {
+        ![SystemKeyboard](systemkeyboard-styled)
+    }
+}
+
+``SystemKeyboard`` can be customized to great extent. You can pass in custom services & state, replace any part of the keyboard, and enable additional components:
+
+```swift
+SystemKeyboard(
+    controller: controller,             // You can setup the view with a controller instance 
+    buttonContent: { $0.view },         // Can be used to customize the content view of any button
+    buttonView: { $0.view },            // Can be used to customize the entire view of any button
+    emojiKeyboard: { $0.view },         // Can be used to customize the emoji keyboard, if any
+    toolbar: { params in params.view }  // Can be used to customize the toolbar above the keyboard
+)
+```
+
+To use the standard views, just return `{ $0.view }`, or `{ params in params.view }`. Otherwise, just return the view you want to use for the provided parameters, which contain contextual information.
 
 
 ## Views
 
-KeyboardKit provides essential views that can be used to create keyboards that mimic the native system keyboards for iOS and iPadOS.
+KeyboardKit also provides gerneral, keyboard-specific views in the ``Keyboard`` namespace, which means that you need to prefix the names below with `Keyboard.` when using them (this applies to all namespaces in the library):
 
 @TabNavigator {
     
-    @Tab("SystemKeyboard") {
+    @Tab("Button") {
         
-        KeyboardKit has a ``SystemKeyboard`` that mimics a native iOS keyboard. It can be used for alphabetic, numeric & symbolic keyboards, 
-        supports all supported locales, layouts, callouts, etc., and can be styled to great extent with styles & themes:
-
-        @Row {
-            
-            @Column {
-                ![SystemKeyboard](systemkeyboard-english-350.jpg)
-            }
-            
-            @Column {
-                ![SystemKeyboard](systemkeyboard-swedish-350.jpg)
-            }
-            
-            @Column {
-                ![SystemKeyboard](systemkeyboard-styled-350.jpg)
-            }
-        }
-
-        ``SystemKeyboard`` can be customized to great extent. You can pass in custom services & state, and replace any part of the keyboard:
-
-        ```swift
-        SystemKeyboard(
-            controller: controller,             // You can setup the view with a controller instance 
-            buttonContent: { $0.view },         // Can be used to customize the content view of any button
-            buttonView: { $0.view },            // Can be used to customize the entire view of any button
-            emojiKeyboard: { $0.view },         // Can be used to customize the emoji keyboard, if any
-            toolbar: { params in params.view }  // Can be used to customize the toolbar above the keyboard
-        )
-        ```
-
-        To use the standard views, just return `{ $0.view }`, or `{ params in params.view }`. Otherwise, just return the view you want to use for the provided params. The view builders provide information to help you setup custom views.
-    }
-    
-    @Tab("Keyboard.Button") {
+        KeyboardKit has a collection of keyboard ``Keyboard/Button`` views and styles that can be used to mimic all parts of a native keyboard, as well as their gestures. The ``Keyboard/Button`` renders the full button, while other views like ``Keyboard/ButtonShadow`` renders parts of it. 
         
-        KeyboardKit has a collection of keyboard ``Keyboard/Button`` views and styles that can be used to mimic all parts of a native keyboard buttons, as well as their gestures. The ``Keyboard/Button`` renders the full button, while views like ``Keyboard/ButtonShadow`` renders parts of it. 
-        
-        ![Keyboard Button](systemkeyboardbuttonpreview-350.jpg)
+        ![Keyboard Button](systemkeyboardbuttonpreview)
 
         Most of the views can be styled with a ``Keyboard/ButtonStyle``, which can be applied with the ``SwiftUI/View/keyboardButtonStyle(_:)`` view modifier. This is however not yet true for the ``Keyboard/Button`` itself, which uses a ``KeyboardStyleProvider`` to support more complex styling.
     }
     
-    @Tab("Keyboard.NextKeyboardButton") {
+    @Tab("NextKeyboardButton") {
 
-        KeyboardKit has a ``NextKeyboardButton`` that can be used to integrate with the iOS keyboard switcher, to select the next keyboard on tap and shows a keyboard menu on long press.
-
-        ![NextKeyboardButton](nextkeyboardbutton-250.jpg)
-
-        This button requires a ``Keyboard/NextKeyboardController`` to trigger controller-based functionality that switches keyboard and shows the menu. KeyboardKit automatically registers the ``KeyboardInputViewController`` when it launches.
-
-        KeyboardKit will by default map ``KeyboardAction/nextKeyboard`` to this view when rendering the action, which means that you don't have to do this.
+        KeyboardKit has a ``NextKeyboardButton`` that integrates with the native keyboard switcher, to select the next keyboard on tap and show a menu with all available keyboards on long press.
+        
+        @Row {
+            @Column {}
+            @Column {
+                ![NextKeyboardButton](nextkeyboardbutton)
+            }
+            @Column {}
+        }
+        
+        KeyboardKit will by default map the ``KeyboardAction/nextKeyboard`` action to this view, and automatically register the required ``KeyboardInputViewController`` on launch. You just have to add a ``KeyboardAction/nextKeyboard`` button, and it will just work.  
     }
     
-    @Tab("Keyboard.Toolbar") {
+    @Tab("Toolbar") {
         
         KeyboardKit has a keyboard ``Keyboard/Toolbar`` that applies a minimum height to its content. It can be used to stop input & action callouts from being cut off, since a custom iOS keyboard can't render outside of its frame.
         
-        ![Keyboard Toolbar](keyboardtoolbar.jpg)
+        ![Keyboard Toolbar](keyboardtoolbar)
         
         This view can be styled with a ``Keyboard/ToolbarStyle``, which can be applied with the ``SwiftUI/View/keyboardToolbarStyle(_:)`` view modifier:
         
@@ -145,29 +193,109 @@ KeyboardKit provides essential views that can be used to create keyboards that m
     }
 }
     
-See the <doc:Styling-Article> article for more information about how styling is handled in KeyboardKit.
+    
+    
+## View Styling
+
+KeyboardKit uses style view modifiers to great extent. This lets you style most KeyboardKit views just like regular SwiftUI views, like how a SwiftUI `Button` can be styled with `.buttonStyle`.
+
+This is however not (yet) true for more complex views, like ``SystemKeyboard``, where KeyboardKit instead uses the ``KeyboardStyleProvider`` concept to provide dynamic styles to any part of the view hieararchy.
+    
+See the <doc:Styling-Article> article for more information about KeyboardKit view styling.
 
 
 
 ## 👑 KeyboardKit Pro
 
-[KeyboardKit Pro][Pro] unlocks additional, powerful capabilities for the ``SystemKeyboard``, such as support for every ``KeyboardLocale``, an ``EmojiKeyboard``, and powerful ``SystemKeyboardPreview`` and ``SystemKeyboardButtonPreview`` view.
-
-See the <doc:Localization-Article>, <doc:Emojis-Article> and <doc:Previews-Article> articles for more information.
+[KeyboardKit Pro][Pro] unlocks additional, powerful ``SystemKeyboard`` capabilities, including full support for all ``KeyboardLocale``s, a full-blown ``EmojiKeyboard``, input toolbars, powerful ``SystemKeyboardPreview``s, etc.
 
 [Pro]: https://github.com/KeyboardKit/KeyboardKitPro
 
-### Views
 
-KeyboardKit Pro adds more views to the SDK, to let you build more complex keyboards with fewer lines of code.
+### System Keyboard
+
+KeyboardKit Pro unlocks additional ``SystemKeyboard``-related views and utils, that make it easier to create more powerful keyboards:
 
 @TabNavigator {
     
-    @Tab("Keyboard.ToggleToolbar") {
+    @Tab("Bottom Row") {
+        KeyboardKit Pro unlocks a ``SystemKeyboardBottomRow`` component that can be used to just render a system keyboard bottom row that by default uses the same layout configuration as the full system keyboard.  
+
+        ![System Keyboard Bottom Row](systemkeyboardbottomrow)
         
-        The ``Keyboard/ToggleToolbar`` can toggle between two toolbars. It's a great way to place a main menu "behind" the autocomplete toolbar, and let it slide in when tapping the customizable toggle.
+        This view is convenient if you want to replace the system keyboard with another view, but keep a bottom button row with some actions. 
+    }
+    
+    @Tab("Emoji Keyboard") {
+        KeyboardKit Pro unlocks an ``EmojiKeyboard``, which is automatically added to ``SystemKeyboard`` when a valid license is registered.
+
+        @Row {
+            @Column { }
+            @Column(size: 2) {
+                ![Emoji Keyboard](emojikeyboard)
+            }
+            @Column { }
+        }
         
-        ![ToggleToolbar](keyboardtoggletoolbar.jpg)
+        The keyboard has support for categories, runtime version adjustments and skintones. Read more about this in the <doc:Emojis-Article> article.
+    }
+    
+    @Tab("Input Toolbar") {
+        KeyboardKit Pro will automatically add an input toolbar to ``SystemKeyboard`` if ``SwiftUI/View/keyboardInputToolbarDisplayMode(_:)`` is applied to the view hierarchy, with an ``Keyboard/InputToolbarDisplayMode/automatic`` or ``Keyboard/InputToolbarDisplayMode/inputs(_:)`` configuration.
+
+        @Row {
+            @Column {
+                ![Input Row in iPad](inputtoolbar-ipad)
+            }
+            @Column {
+                ![Input Row in iPad](inputtoolbar-ipadpro)
+            }
+        }
+        
+        The toolbar is added between the autocomplete toolbar and the system keyboard, and by default uses a slightly smaller button height.
+    }
+    
+    @Tab("Localization") {
+        KeyboardKit Pro unlocks localized services for all supported ``KeyboardLocale``s, which lets you create fully localized keyboards.
+
+        @Row {
+            @Column { }
+            @Column(size: 2) {
+                ![System Keyboard in Swedish](systemkeyboard-swedish)
+            }
+            @Column { }
+        }
+        
+        The various license tiers unlock different amount of ``KeyboardLocale``s, where Gold unlocks all. Read more in the <doc:Localization-Article> article.
+    }
+    
+    @Tab("Previews") {
+        KeyboardKit Pro unlocks a ``SystemKeyboardPreview``, which can be used to preview various configurations, locales, themes, etc.
+
+        @Row {
+            @Column { }
+            @Column(size: 2) {
+                ![System Keyboard Preview](systemkeyboardpreview-theme)
+            }
+            @Column { }
+        }
+        
+        This view can also be used to show keyboard configurations to your users, e.g. on a settings screen. Read more in the <doc:Previews-Article> article.
+    }
+}
+
+
+### Views
+
+KeyboardKit Pro also unlocks more general keyboard views in the ``Keyboard`` namespace, to let you create more complex keyboards:
+
+@TabNavigator {
+    
+    @Tab("ToggleToolbar") {
+        
+        The ``Keyboard/ToggleToolbar`` can be used to toggle between two toolbars, e.g. to place a main menu "behind" the autocomplete toolbar:
+        
+        ![ToggleToolbar](keyboardtoggletoolbar)
         
         This view wraps itself in a ``Keyboard/Toolbar``, which means that it can also be styled with the ``SwiftUI/View/keyboardToolbarStyle(_:)`` modifier.
     }

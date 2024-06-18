@@ -8,22 +8,19 @@
 
 import Foundation
 
-/**
- This protocol can be implemented by classes that can return
- autocomplete suggestions as the user types.
-
- Simply call ``autocompleteSuggestions(for:)`` to perform an
- autocomplete operation that returns suggestions for a text.
-
- KeyboardKit doesn't have a standard provider as it does for
- other services. Instead, an ``Autocomplete/DisabledProvider``
- will be used until you register a real one.
- 
- KeyboardKit Pro unlocks two autocomplete providers when you
- register a valid license key. LocalAutocompleteProvider can
- run locally on device, while RemoteAutocompleteProvider can
- communicate with any REST-based API.
- */
+/// This protocol can be implemented by any classes that can
+/// return autocomplete suggestions as the user types.
+///
+/// Simply call ``autocompleteSuggestions(for:)`` to perform
+/// an autocomplete operation that returns suggestions for a
+/// text in the current ``locale``.
+///
+/// KeyboardKit does not have a standard provider, as it has
+/// for other services. Instead, a disabled provider will be
+/// used until you register a custom provider, or register a
+/// valid KeyboardKit Pro license key.
+///
+/// See <doc:Autocomplete-Article> for more information.
 public protocol AutocompleteProvider: AnyObject {
     
     /// The currently applied locale.

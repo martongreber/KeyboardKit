@@ -11,16 +11,31 @@ import Combine
 import SwiftUI
 import UIKit
 
-/**
- This class extends `UIInputViewController` with KeyboardKit
- specific functionality.
-
- Let your `KeyboardController` inherit this class instead of
- `UIInputViewController` to get new lifecycle functions.
-
- Your `KeyboardController` can override any function, modify
- any ``state`` and replace any ``services``.
- */
+/// This is the main input controller in a KeyboardKit-based
+/// keyboard extension.
+///
+/// When using KeyboardKit, let `KeyboardController` inherit
+/// this class instead of `UIInputViewController`, to extend
+/// it with KeyboardKit-specific functionality.
+///
+/// You can override any functions, modify any ``state`` and
+/// replace any ``services`` to tweak your keyboard behavior.
+/// You also get a lot of additional controller features.
+///
+/// > Warning: A very important thing that you MUST consider
+/// when you use `setup` or `setupPro` with a `view` builder,
+/// is that the `view` builder provides you with an `unowned`
+/// controller reference, since referring to `self` from the
+/// view builder can cause memory leaks. However, since this
+/// reference is a ``KeyboardInputViewController``, you must
+/// still use `self` when you have to refer to your specific
+/// controller class. If you do, it is VERY important to add
+/// `[weak self]` or `[unowned self]` to the builder. If you
+/// don't, the `self` reference will cause a memory leak.
+///
+/// See the <doc:Getting-Started> guide and <doc:Essentials>
+/// article for more information about how to set up and use
+/// this keyboard controller class.
 open class KeyboardInputViewController: UIInputViewController, KeyboardController {
 
 
@@ -99,10 +114,16 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
 
     // MARK: - Setup
     
-    /// The error that was thrown during a pro setup, if any.
+    @available(*, deprecated, message: "Use the setupPro licenseError parameter instead.")
     public var setupProError: Error?
 
     /// Setup KeyboardKit with a custom keyboard view.
+    ///
+    /// > Warning: Make sure to read the class documentation
+    /// for important information on the unowned `controller`
+    /// reference that is passed to the `view` builder. Make
+    /// sure to use `[weak self]` or `[unowned self]` if the
+    /// `view` builder needs to refer to your specific class.
     open func setup<Content: View>(
         with view: @autoclosure @escaping () -> Content
     ) {
@@ -110,6 +131,12 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     }
     
     /// Setup KeyboardKit with a custom keyboard view.
+    ///
+    /// > Warning: Make sure to read the class documentation
+    /// for important information on the unowned `controller`
+    /// reference that is passed to the `view` builder. Make
+    /// sure to use `[weak self]` or `[unowned self]` if the
+    /// `view` builder needs to refer to your specific class.
     open func setup<Content: View>(
         with view: @escaping (_ controller: KeyboardInputViewController) -> Content
     ) {
@@ -145,15 +172,15 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     // MARK: - Keyboard Properties
     
     /// The default set of keyboard-specific services.
-    public lazy var services: Keyboard.KeyboardServices = {
-        let services = Keyboard.KeyboardServices(state: state)
+    public lazy var services: Keyboard.Services = {
+        let services = Keyboard.Services(state: state)
         services.setup(for: self)
         return services
     }()
     
     /// The default set of keyboard-specific state.
-    public lazy var state: Keyboard.KeyboardState = {
-        let state = Keyboard.KeyboardState()
+    public lazy var state: Keyboard.State = {
+        let state = Keyboard.State()
         state.setup(for: self)
         return state
     }()
@@ -206,6 +233,10 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     open func deleteBackward(times: Int) {
         textDocumentProxy.deleteBackward(times: times)
     }
+    
+    open func insertDiacritic(_ diacritic: Keyboard.Diacritic) {
+        textDocumentProxy.insertDiacritic(diacritic)
+    }
 
     open func insertText(_ text: String) {
         textDocumentProxy.insertText(text)
@@ -252,8 +283,12 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     // MARK: - Autocomplete
 
     /// The text to use when performing autocomplete.
+    ///
+    /// ``UIKit/UITextDocumentProxy/currentWordPreCursorPart``
+    /// is used by default. You can override the function to
+    /// change which text to use.
     open var autocompleteText: String? {
-        textDocumentProxy.currentWord
+        textDocumentProxy.currentWordPreCursorPart
     }
 
     /// Whether or not autocomple is enabled.
@@ -265,11 +300,10 @@ open class KeyboardInputViewController: UIInputViewController, KeyboardControlle
     /// Perform an autocomplete operation.
     open func performAutocomplete() {
         guard isAutocompleteEnabled else { return }
-        guard let text = autocompleteText else { return resetAutocomplete() }
         Task {
             do {
                 let suggestions = try await services.autocompleteProvider
-                    .autocompleteSuggestions(for: text)
+                    .autocompleteSuggestions(for: autocompleteText ?? "")
                 updateAutocompleteContext(with: suggestions)
             } catch {
                 updateAutocompleteContext(with: error)

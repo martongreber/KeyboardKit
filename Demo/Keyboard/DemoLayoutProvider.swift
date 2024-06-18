@@ -8,30 +8,29 @@
 
 import KeyboardKit
 
-/**
- This demo-specific provider inherits the standard one, then
- adds a rocket and a locale key around the space key.
- */
-class DemoLayoutProvider: StandardKeyboardLayoutProvider {
+/// This provider inherits the standard provider, then makes
+/// demo-specific adjustments to the standard layout.
+///
+/// The provider will inject a rocket button into the layout.
+///
+/// You can play around with the class to see how it affects
+/// the demo keyboard.
+///
+/// The ``KeyboardViewController`` shows how you can replace
+/// the standard provider with this custom one.
+class DemoLayoutProvider: KeyboardLayout.StandardProvider {
 
     override func keyboardLayout(for context: KeyboardContext) -> KeyboardLayout {
         let layout = super.keyboardLayout(for: context)
         layout.tryInsertRocketButton()
-        layout.tryInsertLocaleSwitcher(for: context)
         return layout
     }
 }
 
 private extension KeyboardLayout {
     
-    func tryInsertLocaleSwitcher(for context: KeyboardContext) {
-        guard context.hasMultipleLocales else { return }
-        guard let button = tryCreateBottomRowItem(for:  .nextLocale) else { return }
-        itemRows.insert(button, after: .space, atRow: bottomRowIndex)
-    }
-    
     func tryInsertRocketButton() {
-        guard let button = tryCreateBottomRowItem(for:  .character("🚀")) else { return }
+        guard let button = tryCreateBottomRowItem(for:  .rocket) else { return }
         itemRows.insert(button, before: .space, atRow: bottomRowIndex)
     }
 }

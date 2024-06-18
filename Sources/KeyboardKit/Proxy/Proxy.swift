@@ -10,9 +10,6 @@ import Foundation
 
 /// This namespace contains proxy-related types.
 ///
-/// For now, this namespace will only have things in it when 
-/// it's part of the KeyboardKit Pro build.
-///
-/// The namespace doesn't contain protocols, open classes or
-/// types of higher importance.
+/// For now, this namespace only has nested types when it is
+/// a part of a KeyboardKit Pro build.
 public struct Proxy {}
