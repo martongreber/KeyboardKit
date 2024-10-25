@@ -32,7 +32,7 @@ public extension Autocomplete {
             autocorrectItem: Autocomplete.ToolbarItemStyle? = nil,
             separator: Autocomplete.ToolbarSeparatorStyle? = nil
         ) {
-            self.height = height ?? 48
+            self.height = height ?? 0
             self.item = item ?? .standard
             self.autocorrectItem = autocorrectItem ?? .standardAutocorrect
             self.separator = separator ?? .standard
